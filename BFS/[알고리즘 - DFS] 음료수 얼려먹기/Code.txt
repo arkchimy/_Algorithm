@@ -1,0 +1,55 @@
+#include <iostream>
+#include <string>
+
+int cnt;
+bool visited[1000][1000];
+int graph[1000][1000]; // 이런식으로 0으로 초기화
+using namespace std;
+
+//상하좌우
+int dx[4] = {-1,1,0 ,0};
+int dy[4] = {0,0,-1,1};
+int row,column;
+
+void DFS(int x , int y)
+{
+  visited[x][y] = true; // 방문처리
+  for(int i =0; i <4; i ++)
+  {
+    int nx = x + dx[i] , ny = y + dy[i];
+    if( nx < 0 || nx == row || ny < 0 || ny == column)
+      continue;
+    if(!visited[nx][ny] && graph[nx][ny] == 0)
+      DFS(nx,ny);
+  }
+}
+int main() 
+{  
+  scanf("%d %d" , &row , &column);
+  cin.ignore(); // \n 삭제
+  
+  for(int i = 0; i < row ; i ++)
+  {
+     string temp;
+     getline(cin,temp);
+     
+     for(int k = 0; k < column ; k++)
+     {
+        graph[i][k] = temp[k] - '0'; // 
+     }
+     
+  }
+  //탐색
+  for(int i = 0; i < row ; i ++)
+  {
+     for(int k = 0; k < column ; k++)
+     {
+        if(graph[i][k] == 0 && !visited[i][k])
+        {
+          cnt++;
+          DFS(i,k);
+        }
+     }
+  }
+  cout << cnt;
+}
