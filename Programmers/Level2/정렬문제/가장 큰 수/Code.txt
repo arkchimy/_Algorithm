@@ -1,0 +1,26 @@
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+bool cmb(string a, string b)
+{
+   string temp1 = a + b;
+   string temp2 = b + a;
+   return temp1 > temp2;
+}
+string solution(vector<int> numbers) 
+{
+    string answer = "";
+    vector<string> vec ;
+    for(int i =0; i < numbers.size(); i++)
+    {
+        vec.push_back(to_string(numbers[i])); 
+    }
+    sort(vec.begin(),vec.end(),cmb);
+    for(string data : vec)
+        answer += data;
+    if(answer[0] == '0')
+        return "0";
+    return answer;
+}
