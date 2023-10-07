@@ -1,0 +1,66 @@
+#include <string>
+#include <vector>
+#include <cmath>
+#include <iostream>
+using namespace std;
+
+int solution(string name) 
+{
+    /* 알파벳을 빼는 문제인듯
+    ex )  data[0] - name[0] 를 하는데 A - D 라 한다면 값이 0 ~ 26으로 
+        대문자 아스키코드는 65~ 90 까지 존재
+        A : 65  D: 68 - 3 이나오는데 3번을 움직이면 됌  
+        A - Z  =  -25 가 나옴. 
+        # abs(A-Z)는 움직여야되는 횟수
+        단 반대로 움직이면 한번에 적용이됌 A일경우 아래로 움직이면 -25가 적용됌
+        # 반대로 움직일떄 이득이 되는경우
+        - ex) data[0] - name[0] > 13 차이가 13이상인 경우 
+        int n = abs(data[0] - name[0]) > 13  ? 25 - abs(data[0] - name[0]) : abs(data[0] - name[0]);
+        
+    */
+
+    int answer = -1;
+    string data = "";
+    for(int i =0; i < name.size(); i++)
+        data += "A"; // 자릿수 확보
+    for(int i =0; i < name.size(); i++)
+    {
+        if( i == 1 && name[i] == 'A')
+        {
+            int L_cnt = 0;
+            int R_cnt = 0;
+            for(int k = name.size() - 1; k != i; k--)
+            {
+                if(name[k] == 'A')
+                {
+                    L_cnt++;
+                }
+                else 
+                    break;
+            }
+            for(int k = i; k < name.size(); k++)
+            {
+                if(name[k] == 'A')
+                {
+                    R_cnt++;
+                }
+                else 
+                    break;
+            }
+            // JABBAA -1번이득 정방향으로 가면 AA를 안거쳐도됌
+            // JABAB  
+            answer++;
+            answer -= abs(L_cnt - R_cnt);
+        }
+        
+        else
+        {
+            answer++;
+            cout << "Right Move" << endl;
+        }
+        int n = abs(data[i] - name[i]) >= 13  ? 26 - abs(data[i] - name[i]) : abs(data[i] - name[i]);
+        cout << n << endl;
+        answer += n;
+    }
+    return answer;
+}

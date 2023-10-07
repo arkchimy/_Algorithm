@@ -1,0 +1,93 @@
+#include <string>
+#include <vector>
+#include <cmath>
+#include <iostream>
+using namespace std;
+
+/* 적합도 55.8 */
+int solution(string name) 
+{
+    int answer = -1;
+    int n = 0;
+    /*
+        JAN => ANJAN
+    */
+    if(name.size() == 1)
+    {
+        n = abs(name[0] - 'A');
+        n = (n > 13 ? 26 - n : n); 
+        return n;
+    }
+    string data = name.substr(1);
+    data += name;
+    int idx = data.size() / 2; // 무조건 홀수가 됌
+    
+    int Lcnt = 0,Rcnt = 0;
+    for(int i = idx - 1 ; i != -1 ; i--)
+    {
+        if(data[i] == 'A') Lcnt++;
+        else break;
+    }
+    for(int i = idx + 1 ; i < data.size(); i++)
+    {
+        if(data[i] == 'A') Rcnt++;
+        else break;
+    }
+    // 'A'카운트가 적은쪽으로 이동해야 손실이 적음.
+    bool rchk = Lcnt > Rcnt;
+    
+    if(rchk)
+    {
+        for(int i = idx ; i < data.size(); i++)
+        {
+            if(data[i] == 'A' && i == data.size()-1)
+                continue;
+            if(Lcnt == 0 && Rcnt == 0){}//  이유는 끝에있는 A가 아니면 의미가없기때문
+            else if(data[i] == 'A')
+            {   // 현재 idx 값이 'A' 경우 끝까지 A가 반복되는지를 체크
+                bool result = true;
+                for(int k = i ; k < data.size() ; k++)
+                {
+                    if(data[k] != 'A')
+                    {   //연속된 A가 아닐경우
+                        result = false;
+                    }
+                }
+                if(result)
+                    break;
+            }
+            
+            n = abs(data[i] - 'A');
+            n = (n > 13 ? 26 - n : n); 
+            answer++;
+            answer += n;
+        }
+    }
+    else
+    {
+        for(int i = idx ; i != -1 ; i--)
+        {
+            if(data[i] == 'A' && i == 0)
+                continue;
+            if(Lcnt == 0 && Rcnt == 0){}//  이유는 끝에있는 A가 아니면 의미가없기때문
+            else if(data[i] == 'A')
+            {   // 현재 idx 값이 'A' 경우 끝까지 A가 반복되는지를 체크
+                bool result = true;
+                for(int k = i ; k != -1 ; k--)
+                {
+                    if(data[k] != 'A')
+                    {   //연속된 A가 아닐경우
+                        result = false;
+                    }
+                }
+                if(result)
+                    break;
+            }
+            n = abs(data[i] - 'A');
+            n = (n > 13 ? 26 - n : n); 
+            answer++; //커서 움직임
+            answer += n;
+        }
+    }
+    return answer;
+}

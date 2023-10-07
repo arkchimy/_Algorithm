@@ -1,0 +1,35 @@
+아이디어 : 
+ String data ="ABCD"가 주어질 때 
+data[0]값을 중심으로 
+BCD +  A + BCD 형태를 만듬
+
+중심으로부터 연속적으로 등장하는 'A'의 갯수를 체크하여 A의 갯수가 적은쪽부터 탐색을함.
+정방향 탐색 Case:
+	for(int i = idx ; i < data.size(); i++) { ... }
+
+역방향 탐색 Case:
+	for(int i = idx ; i != -1 ; i--) { ... }
+
+
+공통 부분:
+	if(data[i] == 'A' && i == data.size()-1)
+                continue;
+            if(Lcnt == 0 && Rcnt == 0){}//  이유는 끝에있는 A가 아니면 의미가없기때문
+            else if(data[i] == 'A')
+            {   // 현재 idx 값이 'A' 경우 끝까지 A가 반복되는지를 체크
+                bool result = true;
+                for(int k = i ; k < data.size() ; k++) 		/* 케이스에 따라 다름 */
+                {
+                    if(data[k] != 'A')
+                    {   //연속된 A가 아닐경우
+                        result = false;
+                    }
+                }
+                if(result)
+                    break;
+            }
+            
+            n = abs(data[i] - 'A');
+            n = (n > 13 ? 26 - n : n); 
+            answer++;
+            answer += n;
