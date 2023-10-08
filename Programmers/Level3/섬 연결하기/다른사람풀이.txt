@@ -1,0 +1,99 @@
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+int d[101];
+/*
+	입력값 〉	4, [[0, 1, 1], [0, 2, 2], [1, 2, 5], [1, 3, 1], [2, 3, 8]]
+	기댓값 〉	4
+	실행 결과 〉	테스트를 통과하였습니다.
+	출력 〉	
+	before{ 0 , 1 , 2 , 3 ,  } 
+	after{ 0 , 0 , 2 , 3 ,  } 
+	
+	before{ 0 , 0 , 2 , 3 ,  } 
+	after{ 0 , 0 , 2 , 0 ,  } 
+	
+	before{ 0 , 0 , 2 , 0 ,  } 
+	after{ 0 , 0 , 0 , 0 ,  } 
+	
+	before{ 0 , 0 , 0 , 0 ,  } 
+	before{ 0 , 0 , 0 , 0 ,  } 
+	
+	
+	입력값 〉	4, [[1, 0, 1], [2, 0, 2], [2, 1, 5], [1, 3, 1], [3, 2, 8]]
+	기댓값 〉	4
+	실행 결과 〉	테스트를 통과하였습니다.
+	출력 〉	
+	{ 1 ,0 ,1} ,  { 1 ,3 ,1} ,  { 2 ,0 ,2} ,  { 2 ,1 ,5} ,  { 3 ,2 ,8} , 
+	
+	int start = getParent(1);
+    int end = getParent(0);
+	
+	before{ 0 , 1 , 2 , 3 ,  } 
+	after{ 1 , 1 , 2 , 3 ,  } 
+	
+	int start = getParent(1);
+    int end = getParent(3);
+	
+	before{ 1 , 1 , 2 , 3 ,  } 
+	after{ 1 , 1 , 2 , 1 ,  } 
+	
+	
+	int start = getParent(2);
+    int end = getParent(0);
+	before{ 1 , 1 , 2 , 1 ,  } 
+	after{ 1 , 2 , 2 , 1 ,  } 
+	
+	before{ 1 , 2 , 2 , 1 ,  } 
+	before{ 1 , 2 , 2 , 2 ,  } 
+
+	getParent(int node); 함수를 통해 연결된 node를 찾아냄
+	로직 :
+	   node 의 연결된 노드를 나타내는 d[]를 처음에 
+	   for() 반복문을 통해 초기화 시킴.
+	   ex)  {0,1,2,3,4,5,6,7}; 서로 자신과 연결되어있다는 의미.
+	  
+	if(node == d[node]){ // 아무 노드도 연결이 되어있지않을경우
+        return node; 
+    }
+	 else return d[node] = getParent(d[node]);
+	 // 특정노드가 node 노드와 연결되어있을때.
+	 
+	 
+	 
+*/
+
+int getParent(int node){
+    if(node == d[node]){
+        return node;
+    }
+    else return d[node] = getParent(d[node]);
+}
+
+bool compare(vector<int> a, vector<int> b){
+    return a[2] < b[2];
+}
+
+int solution(int n, vector<vector<int>> costs) {
+
+    int answer = 0;
+    for(int i =0; i<n; i++){
+        d[i] = i;
+    }
+    sort(costs.begin(), costs.end(), compare);
+    for(int i=0; i<costs.size(); i++){
+        int start = getParent(costs[i][0]);
+        int end = getParent(costs[i][1]);
+        int cost = costs[i][2];
+
+        if(start != end){
+            d[end] = start;
+
+            answer += cost;
+        }
+    }
+
+
+    return answer;
+}

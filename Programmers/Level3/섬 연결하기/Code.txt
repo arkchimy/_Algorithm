@@ -1,0 +1,47 @@
+#include <string>
+#include <vector>
+#include <algorithm>
+
+/* 적중률 25% */
+
+using namespace std;
+vector<pair<int,int>> vec;
+bool cmp(const vector<int> a ,const vector<int> b )
+{   
+    return a[2] < b[2];
+}
+bool link(int x, int y)
+{
+    if(vec.empty()) // vec가 비어있다면 false 리턴
+        return false;
+    bool x_chk =false , y_chk = false;
+    for(auto num : vec)
+    {
+        if((num.first == x && num.second == y) || (num.first == y && num.second == x))
+            return true; // 순서만 바뀐 다리인지 체크
+        if(num.first == x || num.second == x)
+            x_chk = true;
+        if(num.first == y || num.second == y)
+            y_chk = true;
+        if(x_chk && y_chk) // x와 y가 연결된곳이 있다.
+            return true;
+    }
+    return false;
+}
+int solution(int n, vector<vector<int>> costs) 
+{
+    int answer = 0;
+    // 0 - 1   2 - 3  끼리만 연결된 경우에도  지금 코드면 연결이 끝나버림
+    
+    sort(costs.begin(),costs.end(),cmp);// Cost 기준으로 오름차순 정렬
+    for(int i =0; i < costs.size(); i++)
+    {
+        bool linked = link(costs[i][0],costs[i][1]); // 연결체크
+        if(!linked)
+        {   //연결 되어있지않았다면
+            vec.push_back({costs[i][0],costs[i][1]});
+            answer += costs[i][2];  
+        }
+    }
+    return answer;
+}
