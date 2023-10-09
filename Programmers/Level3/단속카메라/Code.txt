@@ -1,0 +1,76 @@
+문제 : https://school.programmers.co.kr/learn/courses/30/lessons/42884
+
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+/* 로직 :
+ 출발 부분을 내림차순으로 정렬하고 출발지점 = start 도착지점 = end 로 정의한다.  (단, start > end)
+
+ start 에서 가까운 순서대로 정렬하였기떄문에 
+ root 노드의 start 보다 작으며 root.end 보다 비교군의 end가 크다면 범위를 축소한다.
+ root노드의 start 와 end가 재정의 되면서  다음에올 노드가 적합하지않다면 새로운 root노드를 추가 하는 방식으로 구현
+
+*/
+using namespace std;
+
+vector<pair<int,int>> root;
+
+int answer;
+
+
+bool comp(vector<int> a ,vector<int> b)
+{
+    return a[0] > b[0];// 큰수를 기준으로 내림차순 정렬
+}
+void link(int start, int end)
+{
+    if(root.empty())
+    {
+        answer++;
+        root.push_back({start,end});
+        return;
+    }
+   
+    for(vector<pair<int,int>>::iterator iter = root.begin(); iter != root.end(); iter++)
+    {
+        if(iter->first >= start && iter->second <= start)
+        {   // 다음에 온 Node의 큰수가 root값보다 클때
+            iter->first = start;
+            if(iter->second <= end)
+                iter->second = end;
+            return;
+        }
+        
+    }
+    // 찾지못했을경우
+    answer++;
+    root.push_back({start,end});
+    return;
+    
+}
+
+
+int solution(vector<vector<int>> routes) 
+{
+    
+    for(int i = 0; i <routes.size(); i++)
+    {
+        if(routes[i][0] < routes[i][1])
+        {   // 둘중 큰 수를 0인덱스로 옮김
+            int temp = routes[i][0];
+            routes[i][0] = routes[i][1];
+            routes[i][1] = temp;
+        }
+    }
+    sort(routes.begin(),routes.end(),comp);
+    for(int i = 0; i <routes.size(); i++)
+        cout << "[" << routes[i][0] << "," << routes[i][1] << "]" << ",";
+    cout << endl;
+    for(int i = 0; i <routes.size(); i++)
+    {
+        link(routes[i][0],routes[i][1]);
+    }
+    return answer;
+}
