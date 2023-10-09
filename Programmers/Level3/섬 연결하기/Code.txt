@@ -3,7 +3,9 @@
 #include <algorithm>
 
 /* 적중률 25% */
-
+/*
+	
+*/
 using namespace std;
 vector<pair<int,int>> vec;
 bool cmp(const vector<int> a ,const vector<int> b )

@@ -1,0 +1,28 @@
+문제 : https://school.programmers.co.kr/learn/courses/30/lessons/42861
+
+모든 섬을 연결하며 최소한의 비용을 사용하라는 의미는 Tree구조를 이루어라 라는 의미로
+최소한의 비용 때문에 중복되는 간선이 존재하지않는다. => Tree 
+
+결국 Tree 구조에 있어 root Node와 Parent Node 가 중요한데
+
+입력된 갯수가 n이라고 할 때
+다른사람 풀이의 d[] = {0,1,2,3,4, .. n - 1};  // 로 초기화를 한다
+d[] 값의 의미는 각 노드의 최상위 노드를 정의
+
+int get_Parent(int node)
+{
+	if(node == d[node])// 자신이 최상위 노드라면
+		return node;	//자신을 리턴
+	return d[node] = get_Parent(d[node]); // 부모 노드의 부모를 호출하면서 최상위 노드가 나올때까지 재귀함.
+}
+a = get_Parent( arr[0] );
+b = get_Paren( arr[1] );
+if( a != b)	// 각자의 최상위 노드가 다르다면
+{
+   //d[a] = b; 
+   d[b] = a ; 둘중 한노드의 최상위 노드를 확장시킨다는 의미.
+
+}
+
+Costs를 최소화 시킨다는 의미에서 Greedy가 사용되었고, // 모든 경우의 수에 맞는지는 모름
+해당 문제는 Greedy 알고리즘으로 해결이 되었다. 
