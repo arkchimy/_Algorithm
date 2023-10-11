@@ -1,0 +1,68 @@
+
+
+#include <string>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+vector<bool> visit;
+
+void dfs(vector<vector<int>> computers, int where)
+{
+	visit[where] = true;//해당 노드를 방문 했음을 표시하는 수단이다.
+    
+    for(int i=0;i < computers.size(); i++)
+    {
+    	if(visit[i]==true||computers[where][i]==0) continue; //0이라면 해당 노드와 연결이 되어 있지않기 때문에 관계 지을 필요가 없다.
+        else dfs(computers,i);//연결된 다음 노드로 넘어가 다시 연결된 노드를 찾게 된다.
+    }
+}
+
+/*
+BFS의 경우 queue를 이용하여야 한다.
+생성된 queue에 어떠한 것도 없을때까지 필요한 과정을 반복 하도록 한다.
+더불어 visit을 통하여 queue에 이미 들어갔던것들을 표시하는 것도 잊지 말아야 한다.
+*/
+void bfs(vector<vector<int>> computers, int where)
+{
+	visit[where] = true;//해당 노드를 방문 했음을 표시하는 수단이다.
+    queue<int> q;
+    q.push(where);
+    
+    while(!q.empty())
+    {
+    	int front = q.front();
+        q.pop();
+        
+    	for(int i=0;i<computers.size();i++)
+        {
+        	if(visit[i]==true||computers[front][i]==0) continue;
+            else{
+            	visit[i] = true;//해당 노드를 방문 했음을 표시하는 수단이다.
+                q.push(i);//해당 노드와 연결된 다른 노드들을 차례차례 넣게 된다.
+            }
+        }
+    }
+}
+
+int solution(int n, vector<vector<int>> computers) {
+    int answer = 0;
+
+	for(int i=0;i < n; i++)
+    {
+        visit.push_back(false);
+    }
+    
+    for(int i=0;i < n; i++)
+    {
+    	if(visit[i]==false)
+        {
+        	dfs(computers,i);
+            //bfs(computers,i);
+            answer++;
+        }
+    }
+
+	return answer;
+}
