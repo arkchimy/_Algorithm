@@ -1,0 +1,49 @@
+문제 : https://school.programmers.co.kr/learn/courses/30/lessons/43165
+
+
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int answer;
+int target;
+void Sub_(int idx,vector<int> numbers, int val);
+void Add_(int idx,vector<int> numbers, int val);
+void Add_(int idx,vector<int> numbers, int val)
+{
+    val += numbers[idx];
+    if(idx == numbers.size() - 1)
+    {   //끝부분
+        if(val == target)
+            answer++;
+        return;
+    }
+    
+    Add_(idx + 1,numbers,val);
+    Sub_(idx + 1,numbers,val);
+}
+void Sub_(int idx,vector<int> numbers, int val)
+{
+    val -= numbers[idx];
+    if(idx == numbers.size() - 1)
+    {   //끝부분
+        if(val == target)
+            answer++;
+        return;
+    }
+    
+    Add_(idx + 1,numbers,val);
+    Sub_(idx + 1,numbers,val);
+}
+
+int solution(vector<int> numbers, int t) 
+{
+    target = t;
+    
+    Add_(0,numbers,0);
+    Sub_(0,numbers,0);
+    return answer;
+}
+
