@@ -1,0 +1,76 @@
+문제 : https://school.programmers.co.kr/learn/courses/30/lessons/43163
+
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+using namespace std;
+string target;
+vector<int> result;
+void DFS(int start,vector<string> words,vector<int> idxs,int count = 1);
+void DFS(int start,vector<string> words,vector<int> idxs,int count)
+{
+    idxs.push_back(start); //시작한 idx
+    if(words[start].compare(target) == 0){ //같다면
+        result.push_back(count); //바꾼횟수 리텃
+        for(auto idx : idxs)
+        {
+            cout << words[idx] <<" ";
+        }
+        cout << endl;
+        return;
+    }
+    for(int i =0; i < words.size(); i++)
+    {
+        bool visit_chk = false;
+        if(start == i) continue;  //자신인 word도 pass;
+        for(auto idx : idxs)// 이미 방문한적 있는 word라면 pass;
+            if(idx == i) visit_chk = true;
+        if(visit_chk) continue; 
+        int cnt =0;
+        for(int k =0; k < words[0].size(); k++)
+        {
+            if(words[start][k] == words[i][k])
+                cnt++;
+            if(cnt == words[0].size() - 1)//1개만 빼고 전부 같을때
+            {
+                vector<int> visited;
+                for(auto idx : idxs)
+                    visited.push_back(idx);
+                
+                DFS(i,words,visited,count + 1);
+            }
+        }
+        
+    }
+}
+int solution(string begin, string t, vector<string> words) 
+{
+    int answer = 0;
+    target = t;
+    for(int i =0; i < words.size(); i++)
+    {   //DFS를 시작할 idx를 정함
+        // begin과 1개만 다른놈들은 전부 시작
+        int cnt =0;
+        vector<int> visited;
+        for(int k = 0; k < words[0].size(); k++)
+        {
+            if(words[i][k] == begin[k])
+            {   // current와 1개만 다른것을 찾아야함.
+                cnt++;
+            }
+            
+            if(cnt == words[0].size() - 1)
+            {   // current와 1개만 다른것을 찾음
+                DFS(i,words,visited);
+            }
+        }
+    }
+    
+    if(result.size() <= 0)
+        return 0;
+    sort(result.begin(),result.end());
+    
+    return result[0];
+}
