@@ -1,0 +1,83 @@
+
+
+#include <vector>
+#include <algorithm>
+#include <iostream>
+#include <queue>
+
+using namespace std;
+int n,m;
+int dx[4] = {-1,1,0,0};
+int dy[4] = {0,0,-1,1};
+
+vector<int> result;
+
+void DFS(int a, int b , vector<vector<int>> arr)
+{
+    int val = arr[a][b];
+    if(a == n - 1 && b == m - 1)
+    { //끝부분
+        result.push_back(val);
+        return;
+    }
+    else if(a >= n || b >=m) //범위 초과
+        return;
+    for(int i =0; i <4 ; i ++)
+    {
+        int x = a + dx[i];
+        int y = b + dy[i];
+        if(x < 0 || y < 0 || x >= n || y >= m)
+            continue;
+        if(arr[x][y] == 1)
+        {
+            arr[x][y] = val + 1;
+            DFS(x,y,arr);
+        }
+    }
+}
+void BFS(int a, int b,vector<vector<int>> arr)
+{
+    queue<pair<int,int>> q;
+    q.push({a,b});
+    int val = arr[a][b];
+    while(!q.empty())
+    {
+        
+        pair<int,int> front;
+        front = q.front();
+        val = arr[front.first][front.second];
+        q.pop();
+        
+        if(front.first == n - 1 && front.second == m - 1){
+            result.push_back(val);
+            return;
+        }
+        for(int i =0; i < 4; i++)
+        {
+            int x = front.first + dx[i];
+            int y = front.second + dy[i];
+            if(x < 0 || x >= n || y < 0 || y >= m)
+                continue;
+            if(arr[x][y] == 1)
+            {
+                arr[x][y] = val + 1;
+                q.push({x,y});
+            }
+        }
+    }
+    
+}
+
+int solution(vector<vector<int> > maps)
+{
+    int answer;
+    n = maps.size();
+    m = maps[0].size();
+    
+    BFS(0,0,maps);
+    sort(result.begin(),result.end());
+    if(result.size() <= 0 )
+        return -1;
+    
+    return result[0];
+}
