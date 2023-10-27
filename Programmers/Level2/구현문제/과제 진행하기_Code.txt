@@ -1,0 +1,98 @@
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <stack>
+#include <iostream>
+
+
+개요:  최근에 했던 과제 => Stack을 유추했음.
+        데이터의 숫자 1000  => 이라는점에서 완전탐색을 해도 괜찮겠다 생각함
+
+요약 : 계획시간에 진행시간을 + 하고 다음 계획시간과 비교하여서 
+	시간이 부족하다면 Stack에 넣고 과제를 진행함.
+
+코드 고칠 점 : time에서 00:00 을 기준으로 하니까 str.find()굳이 쓸필요없었고 [0][1][3][4] 기준으로 계산했으면 더 편했을듯
+
+using namespace std;
+class Timeclass
+{
+    public:
+        Timeclass(const string& data) 
+        {
+            int end = data.find(':',0);
+            this->hour = stoi(data.substr(0,end++));
+            this->min = stoi(data.substr(end,data.size() - end));
+        }
+        int operator+ (const Timeclass& obj)
+        {   //남는 시간 리턴
+            int t_min = (obj.hour - this->hour) * 60;
+            return (obj.min + t_min - this->min ); // 다음 계획시간 - 지금 시간
+        }
+    public:
+        string name;
+
+        unsigned int hour : 5;
+        unsigned int min : 6;
+        
+};
+
+bool comp (vector<string> a, vector<string> b)
+{
+    return a[1] < b[1]; // 사전순서라 오름차순 될듯
+}
+
+void Study(vector<pair<class Timeclass, string>> vec, stack<pair<class Timeclass,string>>& s,vector<string>& answer )
+{
+    for(vector<pair<class Timeclass, string>>::iterator iter = vec.begin() , iter2; iter != vec.end();iter++)
+    {
+        iter2 = iter;
+        iter2++;
+        int time;
+        if(iter2 != vec.end()) //다음 계획이 있다면
+            time = (*iter).first + (*iter2).first ;
+        else
+            time = 9999999;
+        if(stoi((*iter).second) <= time)
+        {   //여유롭게 끝낼떄
+            answer.push_back(iter->first.name);//하던 숙제가 끝남
+            time -= stoi((*iter).second);
+            
+            while(time > 0 && !s.empty())
+            {   // 스택이 있고 시간에 여유가 있을떄
+                pair<class Timeclass, string> top = s.top(); // 최근 과제 꺼내기
+                s.pop();
+                time = time - stoi(top.second); //숙제를 하고 남은시간 
+                if(time < 0) //음수라면 아직 못끝낸것
+                    s.push({top.first,to_string(-time)});
+                else // 끝냈다면
+                    answer.push_back(top.first.name);
+            }
+            
+        }
+        else
+        {   //아직 못끝냈을떄
+            int temp = stoi(iter->second) - time;
+            s.push({iter->first,to_string(temp)});
+        }
+    }
+}
+vector<string> solution(vector<vector<string>> plans) 
+{
+    vector<string> answer;
+    stack<pair<class Timeclass,string>> s;
+    sort(plans.begin(),plans.end(),comp); // 시작 시간에대해 오름차순
+    
+    vector<pair<class Timeclass, string>> vec;
+    for(auto plan : plans)
+    {   //plan[] = {name, start, time};
+        class Timeclass* t = new class Timeclass(plan[1]);
+        t->name = plan[0];
+        vec.push_back({*t,plan[2]});
+    }
+    Study(vec,s,answer);
+    
+    
+    
+    
+    return answer;
+} 
