@@ -1,0 +1,87 @@
+문제 : https://school.programmers.co.kr/learn/courses/30/lessons/67259
+
+DFS로 시간초과 - 10/29
+
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+#include <queue>
+using namespace std;
+
+vector<int> costs;
+pair<int,int> target;
+int dx[4] = {-1,1,0,0};
+int dy[4] = {0,0, -1,1};
+
+typedef enum turn{Start,Up,Right,}Turn;
+void DFS(pair<int,int> pos,int cost, Turn Direction, const vector<vector<int>> board, vector<vector<bool>> visited)
+{   // 시간초과 나버림 BFS 해야됌
+    visited[pos.first][pos.second] = true;
+    if(costs.size() > 0)
+        if(cost >= costs[0]) return;
+    
+    if(pos.first == target.first && pos.second == target.second)
+    {
+        costs.push_back(cost);
+    
+        return;
+    }
+    
+    int rx,ry;
+    
+    for(int i =0; i < 4; i ++)
+    {
+        rx = dx[i] + pos.first;
+        ry = dy[i] + pos.second;
+        if( rx < 0 || ry < 0 || target.first < rx || target.second < ry)
+            continue;
+        Turn direction = i >= 2 ? Turn::Right : Turn::Up;
+        if(board[rx][ry] == 0  && !visited[rx][ry])
+        {
+            if(Direction == Turn::Start || int(Direction) == int(direction))
+            {   //전의 도로방향이 같거나 시작점일 떄
+                int temp = cost + 100;
+                //cout <<"rx : "<< rx << "ry : "<< ry<< endl;
+                
+                DFS({rx,ry},temp,direction,board,visited);
+            }
+            else
+            {
+                int temp = cost + 600;
+                
+                DFS({rx,ry},temp,direction,board,visited);
+            }
+            
+        }
+    }
+}
+int solution(vector<vector<int>> board) 
+{
+    
+    Turn Direction = Turn::Start;
+    pair<int,int> p;
+    vector<vector<bool>> visited;
+    
+    
+    p = {0,0};
+    int size = board.size() - 1;
+    target = {size,size};
+    for(int i =0; i <= size; i++)
+    {
+        vector<bool>* data = new vector<bool>;
+        visited.push_back(*data);
+    }
+    for(int i =0; i <= size; i++)
+    {
+        for(int k =0; k <= size; k++)
+            visited[i].push_back(false);
+    }
+    
+    //DFS(p,0,Direction,board,visited);
+    BFS(p,0,Direction,board,visited);
+    sort(costs.begin(),costs.end());
+    
+    
+    return costs[0];
+}
