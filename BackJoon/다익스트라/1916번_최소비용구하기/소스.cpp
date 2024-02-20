@@ -1,48 +1,57 @@
 #include <iostream>
-#include <queue>
 #include <vector>
+#include <queue>
 #include <limits.h>
+
+
 using namespace std;
 
-vector< vector<int >> graph;
+vector<vector<pair<int, int>>> graph;
 vector<int> d;
 
+void dijkstra(int start)
+{
+	d[start] = 0;
+	priority_queue<pair<int, int>> p;
+	p.push({ start,0 });
+
+	while (!p.empty())
+	{
+		int current = p.top().first;
+		int distance = -p.top().second;
+		p.pop();
+		if (d[current] < distance) continue;
+		for (int i = 0; i < graph[current].size(); i++)
+		{
+			int next = graph[current][i].first;
+			int nextDistance = distance + graph[current][i].second;
+			if (nextDistance < d[next])
+			{
+				d[next] = nextDistance;
+				p.push({ next,-nextDistance });
+			}
+		}
+	}
+}
 int main()
 {
-	priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> q;
-
 	int n, m;
+
 	cin >> n >> m;
-
-
-	graph.resize(n + 1, vector<int>(n + 1, INT_MAX));
-	d.resize(n + 1, INT_MAX);
-
 	int a, b, distance;
+
+	graph.resize(n);
+	d.resize(n,INT_MAX);
 	while (m--)
 	{
 		cin >> a >> b >> distance;
-		q.push({ distance,{a,b} });
-		graph[a][b] = distance;
-		graph[b][a] = distance;
+		a -= 1;
+		b -= 1;
+		graph[a].emplace_back( b,distance );
 	}
 	cin >> a >> b;
-
-
-	d[a] = 0;
-	for (int i = 1; i <= n; i++)
-		graph[i][i] = 0;
-
-	while (!q.empty())
-	{
-		pair<int, pair<int, int>> top = q.top();
-		distance = q.top().first;
-		pair<int, int> p = q.top().second;
-		q.pop();
-			
-		graph[p.first][p.second] = graph[p.first][p.second] < graph[p.first][p.first] + graph[p.first][p.second] ? graph[p.first][p.second] : graph[p.first][p.first] + graph[p.first][p.second];
-		graph[p.second][p.first] = graph[p.first][p.second];
-	}
-	cout << graph[a][b];
-
+	a -= 1;
+	b -= 1;
+	dijkstra(a);
+	cout << d[b];
 }
