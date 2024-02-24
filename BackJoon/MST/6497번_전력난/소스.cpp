@@ -32,7 +32,6 @@ int main()
 		
 		if (!n && !m)
 			break;
-		priority_queue<pair<int, pair<int, int>>> q;
 
 		node.clear();
 		node.resize(n);
@@ -40,7 +39,7 @@ int main()
 		for (int i = 0; i < n; i++)
 			node[i] = i;
 
-
+		priority_queue<pair<int, pair<int, int>>> q;
 		while (m--)
 		{
 			cin >> a >> b >> c;
