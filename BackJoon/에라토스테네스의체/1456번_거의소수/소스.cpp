@@ -1,55 +1,64 @@
+#include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <limits.h>
 #include <vector>
-#include <algorithm>
-#include <cmath>
 
-#define MAX 10000001
+#define MAX 10000000
 
 using namespace std;
 
-typedef unsigned long long ll;
+typedef long long ll;
 
-ll vec[MAX];
+vector<ll> vec;
 vector<ll> prime;
 
 ll a = 0, b = 0;
 
 void sieve()
 {
-	for (ll i = 2; i <= sqrt(MAX); i++)
-	{
-		if (vec[i] == 0)
-			continue;
-
-		for (ll k = i * 2; k/i < MAX/i; k += i)
-			vec[k] = 0;
-		for (ll k = i * i; k/i < MAX /i; k *= i)
-			prime.push_back(k);
-	}
+    for (ll i = 2; i <= MAX; i++)
+    {
+        if (vec[i] == false)
+            continue;
+        prime.push_back(i);
+        for (int j = i * 2; j <= MAX; j += i)
+            vec[j] = false;
+        vec[i] = false;
+    }
+    
 }
 int main()
 {
-	ios::sync_with_stdio(false);
-	cin.tie(nullptr);
-	cout.tie(nullptr);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
 
-	cin >> a >> b;
-	for (int i = 2; i < MAX; i++)
-		vec[i] = i;
+    cin >> a >> b;
+    vec.resize(MAX + 1, 1);
 
-	int cnt = 0;
+    int cnt = 0;
 
-	sieve();
-	sort(prime.begin(), prime.end());
+    sieve();
 
-	for (int i = a; i <= b; i++)
-	{
+    // 소수들을 제곱하라.
+    // 
 
-		if (binary_search(prime.begin(), prime.end(), i))
-			cnt++;
+    for (ll & num : prime)
+    {
+        ll n = 2;
 
-	}
-	cout << cnt;
-	return 0;
+        ll val = pow(num, n);
+        while (a <= val && val <= b)
+        {
+            if (vec[val] != 100)
+            {
+                vec[val] = 100;
+                cnt++;
+            }
+            val = pow(num, ++n);
+        }
+    }
+    cout << cnt;
+    return 0;
 }
