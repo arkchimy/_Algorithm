@@ -2,6 +2,7 @@
 #include <vector>
 #include <array>
 #include <memory>
+#include <algorithm>
 
 
 using namespace std;
@@ -17,27 +18,33 @@ public:
 public:
 	int mPower = 1.f; // 4Byte
 };
-class Player
-{
-public:
-	~Player() = default;
-public:
-	vector<Weapon> causer; //
-
-	void TestFunction2()
-	{
-		for (int i = 0; i < 100; i++)
-			causer.push_back(Weapon());
-	}
-};
+//class Player
+//{
+//public:
+//	~Player() = default;
+//public:
+//	vector<Weapon> causer; //
+//
+//	void TestFunction2()
+//	{
+//		for (int i = 0; i < 100; i++)
+//			causer.push_back(Weapon());
+//	}
+//};
 
 
 int main()
 {
 
-	Player* p = new Player(); // 8바이트
-	p->TestFunction2();
+	Weapon sword; // 4바이트
 
-	delete p;
+	cout << sizeof(sword);
+
+	vector<Weapon*> vec;
+	for (int i = 0; i < 5; i++)
+		vec.emplace_back(new Weapon());
+
+	for_each(vec.begin(), vec.end(), [](Weapon* w) {cout << (long)w << "\n"; });
+	
 	
 }
