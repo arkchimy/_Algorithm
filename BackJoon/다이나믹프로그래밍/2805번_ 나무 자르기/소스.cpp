@@ -9,32 +9,41 @@ int main()
 	cin.tie(nullptr);
 	cout.tie(nullptr);
 
-	long long n, m;
-	cin >> n >> m;
-	vector<long long> vec;
+    long long n, m, stick = -1;
+    long long start, end, mid, sum;
+    cin >> n >> m;
 
-	while (n--)
-	{
-		long long temp;
-		cin >> temp;
-		vec.push_back(temp);
-	}
-	sort(vec.begin(),vec.end());
-	long long stick = *max_element(vec.begin(), vec.end());
-	long long sum = 0;
+    vector<int> vec;
+    vec.resize(n);
 
-	while (1)
-	{
-		if (binary_search(vec.begin(), vec.end(), stick))
-		{
-			sum -= count(vec.begin(), vec.end(), stick);
-		}
-		sum += vec.end() - lower_bound(vec.begin(), vec.end(), stick);
-		if (sum >= m)
-			break;
-		stick--;
-	}
+    for (int i = 0; i < n; i++) 
+        cin >> vec[i];
+    sort(vec.begin(), vec.end());
 
-	cout << stick;
+    start = 0;
+    end = vec.size() - 1;
+
+    while (start <= end) 
+    {
+        sum = 0;
+        mid = (start + end) / 2;
+
+        for (int i = 0; i < n; i++) 
+        {
+            if (vec[i] - mid > 0) 
+                sum += vec[i] - mid;
+        }
+
+        if (sum >= m) 
+        {
+            start = mid + 1;
+            if (mid > stick) 
+                stick = mid;
+        }
+        else 
+            end = mid - 1;
+    }
+
+    cout << stick;
 
 }
