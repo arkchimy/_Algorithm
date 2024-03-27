@@ -20,7 +20,12 @@ int main()
 			return a > b;
 		return abs(a) > abs(b);
 	};
+	bool (*compptr)(const int&, const int&)= Comp;
+	auto compptr2 = Comp;
+
 	priority_queue<int, vector<int>, decltype(comp)> q(comp);
+	priority_queue<int, vector<int>, decltype(compptr)> cx(compptr);
+	priority_queue<int, vector<int>, decltype(compptr2)> cz(compptr2);
 
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr);
