@@ -9,20 +9,23 @@ int main()
 	cin.tie(nullptr);
 	cout.tie(nullptr);
 
-	unordered_map<string, string> h;
-	
 	int n, m;
 	cin >> n >> m;
-	pair<string, string> data;
+
+	int result = 0;
+	unordered_map<string, int> h;
 	while (n--)
 	{
-		cin >> data.first >> data.second;
-		h[data.first] = data.second;
+		string data;
+		cin >> data;
+		h[data]++;
 	}
-	string target;
 	while (m--)
 	{
-		cin >> target;
-		cout << h[target] << '\n';
+		string data;
+		cin >> data;
+		if (h.find(data) != h.end())
+			result++;
 	}
+	cout << result;
 }
