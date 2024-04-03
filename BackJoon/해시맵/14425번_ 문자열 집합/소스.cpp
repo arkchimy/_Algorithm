@@ -18,7 +18,7 @@ int main()
 	{
 		string data;
 		cin >> data;
-		h[data]++;
+		h[data]++;// 1
 	}
 	while (m--)
 	{
