@@ -19,15 +19,30 @@ string findRoot(string node)
 
 // 두 친구 네트워크를 합치는 함수
 void mergeNetwork(string node1, string node2) 
-{
-    string root1 = findRoot(node1);
-    string root2 = findRoot(node2);
+{ //2  //3
+    string root1 = findRoot(node1); // 1
+    string root2 = findRoot(node2); // 5
 
     // 루트 노드가 다를 경우, 한 네트워크를 다른 네트워크에 합침
-    if (root1 != root2) {
-        parent[root2] = root1; // 더 작은 번호의 루트를 부모로 설정
-        networkSize[root1] += networkSize[root2]; // 네트워크 크기 갱신
+    if (root1 != root2) 
+    {
+        // 더 작은 번호의 루트를 부모로 설정하도록 수정
+        if (root1 < root2) 
+        {
+            parent[root2] = root1; 
+            networkSize[root1] += networkSize[root2]; // 노드 수 
+        }
+        else 
+        {
+            parent[root1] = root2;
+            networkSize[root2] += networkSize[root1];
+        }
     }
+    //if (root1 != root2) 
+    //{
+    //    parent[root2] = root1; // 더 작은 번호의 루트를 부모로 설정
+    //    networkSize[root1] += networkSize[root2]; // 네트워크 크기 갱신
+    //}
 }
 
 int main() {
@@ -38,7 +53,8 @@ int main() {
     int n, m;
     cin >> n;
 
-    while (n--) {
+    while (n--) 
+    {
         parent.clear();
         networkSize.clear();
 
@@ -46,19 +62,19 @@ int main() {
 
         while (m--) 
         {
-            string s1, s2;
+            string s1, s2; //2 3
             cin >> s1 >> s2;
 
             // 처음 등장하는 친구일 경우, 자기 자신을 부모로 설정하고 네트워크 크기를 1로 초기화
             if (parent.find(s1) == parent.end()) 
             {
-                parent[s1] = s1;
-                networkSize[s1] = 1;
+                parent[s1] = s1; //자기 자신을 최상위 부모노드로 입력
+                networkSize[s1] = 1; // 1 
             }
             if (parent.find(s2) == parent.end()) 
             {
-                parent[s2] = s2;
-                networkSize[s2] = 1;
+                parent[s2] = s2; //자기 자신을 최상위 부모노드로 입력
+                networkSize[s2] = 1; // 1
             }
 
             // 두 친구 네트워크를 합침
