@@ -23,8 +23,8 @@ int main()
         pair<ll, int> front = q.front();
         q.pop();
 
-        int cur = front.first;
-        int cnt = front.second;
+        ll cur = front.first;
+        ll cnt = front.second;
 
         if (cur == b)
         {
