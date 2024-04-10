@@ -20,7 +20,7 @@ void sol(int depth, vector<bool> &visited)
         cout << "\n";
         return;
     }
-
+ 
     for (int i = 0; i < n; i++)
     {
         if (!visited[i])
@@ -65,14 +65,15 @@ int main()
 //int n, m;
 //
 //vector<int> vec;
-//void sol(int idx,vector<bool> visited,vector<int> str)
+//void sol(int idx,vector<bool> visited,vector<int> result)
 //{
 //    visited[idx] = true;
-//    str.emplace_back(vec[idx]);
-//    if (str.size() == m)
+//    
+//    result.emplace_back(vec[idx]);
+//    if (result.size() == m)
 //    {
-//        for (int i = 0; i < str.size(); i++)
-//            cout << str[i] << " ";
+//        for (int i = 0; i < result.size(); i++)
+//            cout << result[i] << " ";
 //        cout << "\n";
 //
 //        return;
@@ -80,8 +81,9 @@ int main()
 //
 //    for (int i =0; i < visited.size(); i++)
 //    {
+//        // m == 3 으로 가정
 //        if (visited[i] == false)
-//            sol(i, visited, str);
+//            sol(i, visited, result);
 //    }
 //}
 //int main()
@@ -101,9 +103,10 @@ int main()
 //    sort(vec.begin(), vec.end());
 //    for (int i = 0; i < n; i++)
 //    {
+//        // vec[3] 부터 탐색
 //        vector<bool> visited(n);
-//        vector<int> str;
-//        sol(i,visited,str);
+//        vector<int> result;
+//        sol(i, visited, result);
 //    }
 // }
-//
+
