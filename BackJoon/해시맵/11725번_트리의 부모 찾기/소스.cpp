@@ -1,37 +1,37 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include<stdio.h>
-#include <unordered_map>
-
+#include <iostream>
+#include <vector>
 using namespace std;
+
+int pNode[100001];
+vector<vector<int>> graph;
+void DFS(int n)
+{
+ 
+    for(int i=0; i < graph[n].size(); i++)
+    {
+        if (pNode[graph[n][i]] != false)
+            continue;
+        pNode[graph[n][i]] = n;
+        DFS(graph[n][i]);
+    }
+}
 
 int main()
 {
-    unordered_map<int, int> m;
-    
     int n;
-    scanf("%d",&n);
-
+    cin >> n;
+    graph.resize(n + 1);
     int a, b;
-
-    for (int i =0; i < n-1 ; i++)
+   
+    for (int i =0; i < n - 1;i ++)
     {
-        scanf("%d %d", &a,&b);
-        if (m[a] == 0)
-            m[a] = b;
-        if (m[b] == 0)
-            m[b] = a;
+        cin >> a >> b;
+        graph[a].emplace_back(b);
+        graph[b].emplace_back(a);
     }
-    int parent = 1;
-    for (int i = 1; i < n; i++)
-    {
-        int child = m[parent];
-        m[child] = parent;
-        parent = child;
-    }
-
+    DFS(1);
     for (int i = 2; i <= n; i++)
     {
-        printf("%d \n", m[i]);
+        cout << pNode[i] << "\n";
     }
-
-}
+ }
