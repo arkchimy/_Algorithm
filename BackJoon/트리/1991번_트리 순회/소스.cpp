@@ -1,108 +1,192 @@
 #include <iostream>
 #include <vector>
-
 using namespace std;
 
 struct Node
 {
-    char data;
+    Node(char data) 
+        : left(nullptr), right(nullptr), mData(data){}
     Node *left;
     Node *right;
-
-    Node(char d) : data(d), left(nullptr), right(nullptr)
-    {
-    }
+    char mData;
 };
-
-// 전위 순회 (Root-Left-Right)
-void preorder(Node *node)
+vector<Node *> nodes;
+void preorder(Node* node)
 {
     if (node == nullptr)
         return;
-    cout << node->data;    // 먼저 현재 노드 출력
-    preorder(node->left);  // 왼쪽 서브트리 순회
-    preorder(node->right); // 오른쪽 서브트리 순회
+    cout << node->mData;
+    preorder(node->left);
+    preorder(node->right);
 }
-
-// 중위 순회 (Left-Root-Right)
 void inorder(Node *node)
 {
     if (node == nullptr)
         return;
-    inorder(node->left);  // 왼쪽 서브트리 순회
-    cout << node->data;   // 현재 노드 출력
-    inorder(node->right); // 오른쪽 서브트리 순회
+    inorder(node->left);
+    cout << node->mData;
+    inorder(node->right);
 }
-
-// 후위 순회 (Left-Right-Root)
 void postorder(Node *node)
 {
     if (node == nullptr)
         return;
-    postorder(node->left);  // 왼쪽 서브트리 순회
-    postorder(node->right); // 오른쪽 서브트리 순회
-    cout << node->data;     // 마지막으로 현재 노드 출력
+    postorder(node->left);
+    postorder(node->right);
+    cout << node->mData;
 }
-
 int main()
 {
     int n;
     cin >> n;
 
-    vector<Node *> nodes(26, nullptr); // 노드를 저장할 벡터
+    char a, b, c;
 
-    // 트리 구성
-    for (int i = 0; i < n; ++i)
+    nodes.resize(n,nullptr);
+    while (n--)
     {
-        char parent, left, right;
-        cin >> parent >> left >> right;
-
-        int parentIdx = parent - 'A';
-        if (nodes[parentIdx] == nullptr)
+        cin >> a >> b >> c;
+        int parent = a - 'A';
+        if (nodes[parent] == nullptr)
         {
-            nodes[parentIdx] = new Node(parent);
+            nodes[parent] = new Node(a);
+            nodes[parent]->mData = a;
         }
-
-        if (left != '.')
+        int left = b - 'A';
+        if (b != '.')
         {
-            int leftIdx = left - 'A';
-            nodes[leftIdx] = new Node(left);
-            nodes[parentIdx]->left = nodes[leftIdx];
+            nodes[left] = new Node(b);
+            nodes[left]->mData = b;
+            nodes[parent]->left = nodes[left];
         }
-
-        if (right != '.')
+        int right = c - 'A';
+        if (c != '.')
         {
-            int rightIdx = right - 'A';
-            nodes[rightIdx] = new Node(right);
-            nodes[parentIdx]->right = nodes[rightIdx];
+            nodes[right] = new Node(c);
+            nodes[right]->mData = c;
+            nodes[parent]->right = nodes[right];
         }
     }
 
-    Node *root = nodes[0]; // 루트 노드
+    preorder(nodes[0]);
+    cout << "\n";
+    inorder(nodes[0]);
+    cout << "\n";
+    postorder(nodes[0]);
 
-    // 전위 순회
-    preorder(root);
-    cout << endl;
-
-    // 중위 순회
-    inorder(root);
-    cout << endl;
-
-    // 후위 순회
-    postorder(root);
-    cout << endl;
-
-    // 동적 할당된 노드 메모리 해제
     for (Node *node : nodes)
     {
         if (node != nullptr)
-        {
             delete node;
-        }
     }
 
-    return 0;
 }
+
+//#include <iostream>
+//#include <vector>
+//
+//using namespace std;
+//
+//struct Node
+//{
+//    char data;
+//    Node *left;
+//    Node *right;
+//
+//    Node(char d) : data(d), left(nullptr), right(nullptr)
+//    {
+//    }
+//};
+//
+//// 전위 순회 (Root-Left-Right)
+//void preorder(Node *node)
+//{
+//    if (node == nullptr)
+//        return;
+//    cout << node->data;    // 먼저 현재 노드 출력
+//    preorder(node->left);  // 왼쪽 서브트리 순회
+//    preorder(node->right); // 오른쪽 서브트리 순회
+//}
+//
+//// 중위 순회 (Left-Root-Right)
+//void inorder(Node *node)
+//{
+//    if (node == nullptr)
+//        return;
+//    inorder(node->left);  // 왼쪽 서브트리 순회
+//    cout << node->data;   // 현재 노드 출력
+//    inorder(node->right); // 오른쪽 서브트리 순회
+//}
+//
+//// 후위 순회 (Left-Right-Root)
+//void postorder(Node *node)
+//{
+//    if (node == nullptr)
+//        return;
+//    postorder(node->left);  // 왼쪽 서브트리 순회
+//    postorder(node->right); // 오른쪽 서브트리 순회
+//    cout << node->data;     // 마지막으로 현재 노드 출력
+//}
+//
+//int main()
+//{
+//    int n;
+//    cin >> n;
+//
+//    vector<Node *> nodes(26, nullptr); // 노드를 저장할 벡터
+//
+//    // 트리 구성
+//    for (int i = 0; i < n; ++i)
+//    {
+//        char parent, left, right;
+//        cin >> parent >> left >> right;
+//
+//        int parentIdx = parent - 'A';
+//        if (nodes[parentIdx] == nullptr)
+//        {
+//            nodes[parentIdx] = new Node(parent);
+//        }
+//
+//        if (left != '.')
+//        {
+//            int leftIdx = left - 'A';
+//            nodes[leftIdx] = new Node(left);
+//            nodes[parentIdx]->left = nodes[leftIdx];
+//        }
+//
+//        if (right != '.')
+//        {
+//            int rightIdx = right - 'A';
+//            nodes[rightIdx] = new Node(right);
+//            nodes[parentIdx]->right = nodes[rightIdx];
+//        }
+//    }
+//
+//    Node *root = nodes[0]; // 루트 노드
+//
+//    // 전위 순회
+//    preorder(root);
+//    cout << endl;
+//
+//    // 중위 순회
+//    inorder(root);
+//    cout << endl;
+//
+//    // 후위 순회
+//    postorder(root);
+//    cout << endl;
+//
+//    // 동적 할당된 노드 메모리 해제
+//    for (Node *node : nodes)
+//    {
+//        if (node != nullptr)
+//        {
+//            delete node;
+//        }
+//    }
+//
+//    return 0;
+//}
 //#include <iostream>
 //#include <vector>
 //#include <cmath>

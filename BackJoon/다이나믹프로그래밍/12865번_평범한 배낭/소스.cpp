@@ -19,6 +19,8 @@ int main()
         int weight, value;
         cin >> weight >> value;
 
+        // 무게가 5가 입력됬을 경우
+        // 가질 수 있는 무게에서 weight 가 될때까지 빼면 7 ~ 5 까지 하게됌.
         for (int w = K; w >= weight; --w)
             dp[w] = max(dp[w], dp[w - weight] + value);
         
