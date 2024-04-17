@@ -9,8 +9,6 @@ int sol(const string& s1,const string& s2)
     int m = s1.length();
     int n = s2.length();
 
-    memset(dp, 0, sizeof(dp));
-
     for (int i = 1; i <= m; ++i)
     {
         for (int j = 1; j <= n; ++j)
@@ -37,8 +35,7 @@ int main()
     string s1, s2;
     cin >> s1 >> s2;
 
-    int result = sol(s1, s2);
-    cout << result;
+    cout << sol(s1, s2);
 
     return 0;
 }
