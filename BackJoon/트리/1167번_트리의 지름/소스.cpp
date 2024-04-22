@@ -62,7 +62,7 @@ int main()
     }
 
     memset(visited, false, sizeof(visited));
-    dfs(1, 0);
+    dfs(3, 0);
 
     memset(visited, false, sizeof(visited));
     maxDistance = 0;

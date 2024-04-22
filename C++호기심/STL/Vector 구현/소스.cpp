@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 template <typename T>
 class Vector
@@ -9,6 +10,15 @@ public:
 	{
 		data = new T[capacity];
 	}
+	~Vector()
+	{
+		delete[] data;
+	}
+	Vector(Vector&& other) noexcept
+		:mSize(move(other.mSize)),capacity(std::move(other.capacity))
+	{
+		other.data = nullptr;
+	}
 	T& operator [] (const int idx)
 	{
 		return data[idx];
@@ -17,9 +27,9 @@ public:
 	{
 		T* temp = new int[capacity * 2];
 		// 앞의 인덱스부터 하면 안될 것같지만 실험
-		for (int i = capacity - 1; i >= 0; i--)
+		for (int i = 0 ; i < mSize; i++)
 		{
-			temp[i] = std::move(data[i]);
+			temp[i] = std::move(data[i]); 
 		}
 
 		data = std::move(temp);
@@ -81,6 +91,8 @@ private:
 	int capacity = 2;
 
 };
+
+
 int main()
 {
 	Vector<int> vec;
@@ -114,4 +126,5 @@ int main()
 		std::cout << vec[i] << ", ";
 	}
 	std::cout << "\n";
+	
 }
