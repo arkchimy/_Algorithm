@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34407.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "1032번_명령 프롬프트", "1032번_명령 프롬프트.vcxproj", "{4DFA7F5F-4F59-44C6-A1B0-29202739DBAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4DFA7F5F-4F59-44C6-A1B0-29202739DBAD}.Debug|x64.ActiveCfg = Debug|x64
+		{4DFA7F5F-4F59-44C6-A1B0-29202739DBAD}.Debug|x64.Build.0 = Debug|x64
+		{4DFA7F5F-4F59-44C6-A1B0-29202739DBAD}.Debug|x86.ActiveCfg = Debug|Win32
+		{4DFA7F5F-4F59-44C6-A1B0-29202739DBAD}.Debug|x86.Build.0 = Debug|Win32
+		{4DFA7F5F-4F59-44C6-A1B0-29202739DBAD}.Release|x64.ActiveCfg = Release|x64
+		{4DFA7F5F-4F59-44C6-A1B0-29202739DBAD}.Release|x64.Build.0 = Release|x64
+		{4DFA7F5F-4F59-44C6-A1B0-29202739DBAD}.Release|x86.ActiveCfg = Release|Win32
+		{4DFA7F5F-4F59-44C6-A1B0-29202739DBAD}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {773712D4-CFB7-4E83-90CC-7CF64C6D1423}
+	EndGlobalSection
+EndGlobal
