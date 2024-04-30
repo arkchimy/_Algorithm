@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34407.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "2164번_카드2", "2164번_카드2.vcxproj", "{19779346-8CEB-46B6-8FA4-359A6EAFBAAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19779346-8CEB-46B6-8FA4-359A6EAFBAAE}.Debug|x64.ActiveCfg = Debug|x64
+		{19779346-8CEB-46B6-8FA4-359A6EAFBAAE}.Debug|x64.Build.0 = Debug|x64
+		{19779346-8CEB-46B6-8FA4-359A6EAFBAAE}.Debug|x86.ActiveCfg = Debug|Win32
+		{19779346-8CEB-46B6-8FA4-359A6EAFBAAE}.Debug|x86.Build.0 = Debug|Win32
+		{19779346-8CEB-46B6-8FA4-359A6EAFBAAE}.Release|x64.ActiveCfg = Release|x64
+		{19779346-8CEB-46B6-8FA4-359A6EAFBAAE}.Release|x64.Build.0 = Release|x64
+		{19779346-8CEB-46B6-8FA4-359A6EAFBAAE}.Release|x86.ActiveCfg = Release|Win32
+		{19779346-8CEB-46B6-8FA4-359A6EAFBAAE}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {044FEA19-0B7B-4BCB-B5A5-18C0A1E363D1}
+	EndGlobalSection
+EndGlobal
