@@ -66,7 +66,7 @@ int main()
     res2 = d1v2 + dv1v2 + dv1N; // 1 -> v2 -> v1 -> N
 
     long long answer = min(res1, res2);
-    if (answer >= INF || answer < 0) // Check overflow and path existence
+    if (answer >= INF || answer < 0) 
         cout << "-1\n";
     else
         cout << answer << '\n';
