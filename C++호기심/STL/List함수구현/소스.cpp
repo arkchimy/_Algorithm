@@ -12,7 +12,6 @@ struct List
 	T data;
 };
 
-
 template<typename T>
 void Print(List<T>* head)
 {
@@ -24,6 +23,26 @@ void Print(List<T>* head)
 		current = current->next;
 	}
 }
+template<typename T>
+List<T>* reverse(List<T>& head)
+{
+	List<T>* current = &head;
+	List<T>* front = nullptr;
+	List<T>* pre = nullptr;
+
+	while (current != nullptr)
+	{
+		pre = current->next;
+		current->next = front;
+		front = current;
+
+		current = pre;
+
+	}
+	return front;
+}
+
+
 int main()
 {
 	List<int>* list = new List<int>();
@@ -36,10 +55,12 @@ int main()
 			current->next = new List<int>();
 		else
 			current->next = nullptr;
-		current = current->next;
+		current = ++(*current);
 	}
 
 	Print(list);
+	Print(reverse(*list));
+	
 	while (list != nullptr)
 	{
 		auto temp = list;
