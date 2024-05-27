@@ -15,7 +15,7 @@ struct TreeNode
 };
 
 // 이진 검색 트리에 노드를 삽입하는 함수
-void insertNode(TreeNode *&root, int val)
+void insertNode(TreeNode* &root, int val)
 {
     if (root == nullptr)
     {
