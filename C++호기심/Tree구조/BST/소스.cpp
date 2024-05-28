@@ -46,13 +46,27 @@ void midsearch(List<T>* header)
 	midsearch(header->right);
 
 }
+template <typename T>
+void dealloc(List<T>* header)
+{
 
+	if (header == nullptr)
+	{
+		return;
+	}
+	
+	dealloc(header->left);
+	dealloc(header->right);
+	delete header;
+}
 int main()
 {
 	iList* header = nullptr;
 
-	for (int i = 0; i < 10; i++)
-		insert(&header, rand() % 11);
-	
+	for (int i = 0; i < 100; i++)
+		insert(&header, rand() % 101);
 	midsearch(header);
+	dealloc(header);
+
+
 }
