@@ -39,9 +39,6 @@ public:
 int HashTable::TABLE_SIZE = 10;
 
 
-
-
-
 int main()
 {
 		
