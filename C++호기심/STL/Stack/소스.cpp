@@ -5,10 +5,6 @@ using namespace std;
 template<typename T>
 struct Node
 {
-	~Node()
-	{
-		free(this);
-	}
 	Node<T>* front;
 	T data;
 };
@@ -20,7 +16,7 @@ struct Stack
 		:node(nullptr) {};
 	~Stack()
 	{
-		free(node);
+		Dealloc();
 	}
 	Node<T>* node;
 
@@ -41,14 +37,23 @@ struct Stack
 	}
 	void Print()
 	{
+		Node<T>* temp = node;
+		while (temp != nullptr)
+		{
+			cout << temp->data <<"\n";
+			Node<T>* front = temp->front;
+			temp = front;
+		}
+		
+	}
+	void Dealloc()
+	{
 		while (node != nullptr)
 		{
-			cout << node->data <<"\n";
 			Node<T>* front = node->front;
 			free(node);
 			node = front;
 		}
-		
 	}
 };
 
@@ -60,6 +65,4 @@ int main()
 	for (int i = 0; i < 10; i++)
 		s.Push(i);
 	s.Print();
-
-
 }
