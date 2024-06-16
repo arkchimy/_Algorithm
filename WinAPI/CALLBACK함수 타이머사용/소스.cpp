@@ -9,32 +9,31 @@
 
 void CALLBACK TimerProc(HWND hwnd, UINT uMessage, UINT id, DWORD d)
 {
-
+	static int num = 0;
+	char str[256];
+	
+	HDC hdc = GetDC(hwnd);
+	TextOut(hdc, 100, 100, L"dsdaaaaaaaaaaaaaaa", ++num);
+	return ;
+	
+	
 }
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
 {
-	static HANDLE timer;
 	switch (uMessage)
 	{
 	case WM_CREATE:
-		SetTimer(hwnd, 1, 100, TimerProc);
+		SendMessage(hwnd, WM_TIMER, 1, 0);
+		SetTimer(hwnd, 1, 1000, TimerProc);
+		
 		return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
 	case WM_LBUTTONDOWN:
-		SendMessage(hwnd, WM_TIMER, 1, 0);
+		
 		return 0;
-	case WM_TIMER:
-		switch (wParam)
-		{
-		case 1:
-			HDC hdc = GetDC(hwnd);
-			TextOut(hdc, 100, 100, L"Å×½ºÆ®", 3);
-			return 0;
-		}
 	}
-
 	return DefWindowProc(hwnd, uMessage, wParam, lParam);
 
 }
