@@ -22,25 +22,58 @@ HBRUSH RedBrush;
 HBRUSH BlackBrush;
 HBRUSH WhiteBrush;
 
+pair<int, int> start_node;
+
 void DrawGraph(HDC& hdc);
-void dijkstra(const int& start)
+void dijkstra(HWND& hwnd,HDC& hdc,const pair<int,int>& start)
 {
 	queue<pair<int,int>> q;
-	q.push({ start,0 });
+	vector<bool> dij_visited(visited.size(), false);
+	q.push(start);
+
+	int dx[] = { -1,+1,0,0 };
+	int dy[] = { 0, 0, -1,1 };
 
 	while (!q.empty())
 	{
-		auto [front,cost] = q.front();
+		auto [x,y] = q.front();
 		q.pop();
-		for (const int& idx : graph[front])
+		for (int i = 0; i < 4; i++)
 		{
-			if (d[idx] < cost + 1)
+			int rx = x + dx[i];
+			int ry = y + dy[i];
+			if (rx < 0 || ry < 0 || graph[i].size() <= rx || graph[i].size() <= ry)
 				continue;
-			d[idx] = cost + 1;
-			q.push({idx,cost + 1});
+			// 타겟에 도착했을 경우
+			if (graph[rx][ry] == 2) 
+			{
+				MessageBox(hwnd, L"찾기 성공", L"다익스트라 성공", MB_ICONINFORMATION);
+				return;
+			}
+			if (!dij_visited[Wnd_Width / Block_Size * rx + ry]) 
+			{
+				dij_visited[Wnd_Width / Block_Size * rx + ry] = true;
+				q.push({ rx,ry });
+				graph[rx][ry] = -1;
+
+				RECT rt =
+				{
+					Block_Size* rx,
+					Block_Size* ry,
+					Block_Size* rx + Block_Size,
+					Block_Size* ry + Block_Size
+				};
+				
+				InvalidateRect(hwnd,&rt,true);
+				
+			}
 		}
 		
 	}
+	
+	MessageBox(hwnd, L"찾기 실패", L"다익스트라 실패", MB_ICONERROR);
+	return;
+	
 }
 
 void InitVisitied()
@@ -80,9 +113,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	RECT rt = {100,100,500,500};
 	PAINTSTRUCT pt;
-	HDC hdc;
-	WORD x;
-	WORD y;
+	static HDC hdc;
+	static WORD x ;
+	static WORD y ;
 	switch (iMessage)
 	{
 	case WM_CREATE:
@@ -90,7 +123,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		DrawGraph(hdc);
 		EndPaint(hwnd, &pt);
 		return 0;
+	case WM_CHAR:
+		switch (wParam)
+		{
+			case 'A':
+				dijkstra(hwnd,hdc,start_node);
+				break;
 
+			case 'S':
+		
+				float row = x / Block_Size;
+				float column = y / Block_Size;
+
+				x = (WORD)round(row);
+				y = (WORD)round(column);
+
+				start_node = { x,y };
+			
+				break;
+
+		}
+		return 0;
 	case WM_LBUTTONDOWN:
 		LB = true;
 		x = LOWORD(lParam);
@@ -132,7 +185,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		x = LOWORD(lParam);
 		y = HIWORD(lParam);
-		if (LB) 
+		/*if (LB) 
 		{
 			LClickEvent(hdc, x, y);
 		}
@@ -148,7 +201,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			Block_Size * y + Block_Size
 		};
 
-		InvalidateRect(hwnd, &rt, true);
+		InvalidateRect(hwnd, &rt, true);*/
 		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &pt);
@@ -233,7 +286,13 @@ void DrawGraph(HDC& hdc)
 		{
 			if (!visited[i * (Wnd_Width/ Block_Size) + j])
 				continue;
-			if(graph[i][j] == 1)
+			/*
+			* graph의 값이 1이면 초록색
+			*  --		   2이면 빨강색
+			*  --          -1 이면 검은색
+			*  --		   0이면 하얀색
+			*/
+			if (graph[i][j] == 1) 
 				SelectObject(hdc, GreenBrush);
 			else if(graph[i][j] == 2)
 				SelectObject(hdc, RedBrush);
@@ -242,9 +301,9 @@ void DrawGraph(HDC& hdc)
 			else
 				SelectObject(hdc, WhiteBrush);
 			Rectangle(hdc,
-				0 + Block_Size * i,
-				0 + Block_Size * j,
-				0 + Block_Size * i + Block_Size,
-				0 + Block_Size * j + Block_Size);
+				Block_Size * i,
+				Block_Size * j,
+				Block_Size * i + Block_Size,
+				Block_Size * j + Block_Size);
 		}
 }
