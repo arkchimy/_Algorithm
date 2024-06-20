@@ -10,20 +10,32 @@ int Column;
 
 using namespace std;
 
-std::vector<std::vector<int>> graph;
-std::vector<std::vector<bool>> visited;
 
-HBRUSH BlackBrush;
-HBRUSH GreenBrush;
-HBRUSH RedBrush;
-HBRUSH WhiteBrush;
-HBRUSH GrayBrush;
-void DrawGrid(const HWND& hwnd, const pair<int, int>& idx)
+
+void Graph::WhiteFill(const pair<int, int>& node)
+{
+	m_graph[node.first][node.second] = 0;
+}
+void Graph::GreenFill(const pair<int, int>& node)
+{
+	m_graph[node.first][node.second] = 1;
+}
+void Graph::RedFill(const pair<int, int>& node)
+{
+	m_graph[node.first][node.second] = 2;
+}
+void Graph::BlackFill(const pair<int, int>& node)
+{
+	m_graph[node.first][node.second] = 3;
+}
+
+
+void Graph::DrawGrid(const HWND& hwnd, const pair<int, int>& idx)
 {
 	HDC hdc = GetDC(hwnd);
-	visited[idx.first][idx.second] = true;
+	m_visited[idx.first][idx.second] = true;
 
-	switch (graph[idx.first][idx.second])
+	switch (m_graph[idx.first][idx.second])
 	{
 		case 0:
 			SelectObject(hdc, WhiteBrush);
@@ -50,45 +62,41 @@ void DrawGrid(const HWND& hwnd, const pair<int, int>& idx)
 	ReleaseDC(hwnd, hdc);
 }
 
-bool IsVisited(const pair<int, int>& idx)
+bool Graph::IsVisited(const pair<int, int>& idx)
 {
 	auto [row, col] = idx;
-	return visited[row][col];
+	return m_visited[row][col];
 }
 
-void ClickPos(LPARAM lParam, std::pair<int, int>& pos)
+void Graph::ClickPos(LPARAM lParam, std::pair<int, int>& pos)
 {
 	int x = (int)LOWORD(lParam) / BlockSize;
 	int y = (int)HIWORD(lParam) / BlockSize;
 	pos = { x,y };
 }
 
-void ResetVisited()
+void Graph::ResetVisited()
 {
-	for (std::vector<bool>& row : visited)
+	for (std::vector<bool>& row : m_visited)
 		fill(row.begin(), row.end(), false);
 }
-void ResetGraph()
+void Graph::ResetGraph()
 {
-	for (std::vector<int>& row : graph)
+	for (std::vector<int>& row : m_graph)
 		fill(row.begin(), row.end(), 0);
 }
-void Initalize(const HWND& hwnd)
+void Graph::Initalize(const HWND& hwnd)
 {
-	GreenBrush = CreateSolidBrush(RGB(0, 255, 0));
-	RedBrush = CreateSolidBrush(RGB(255, 0, 0));
-	BlackBrush = CreateSolidBrush(RGB(0, 0, 0));
-	WhiteBrush = CreateSolidBrush(RGB(255, 255, 255));
-	GrayBrush = CreateSolidBrush(RGB(125, 125, 125));
+
 
 	Row = (gWnd_rt.right - gWnd_rt.left) / BlockSize;
 	Column = (gWnd_rt.bottom - gWnd_rt.top) / BlockSize;
 
-	graph.resize( Row, vector<int>(Column, 0));
-	visited.resize( Row, vector<bool>(Column, false));
+	m_graph.resize( Row, vector<int>(Column, 0));
+	m_visited.resize( Row, vector<bool>(Column, false));
 }
 
-void PaintedDraw(const HWND& hwnd)
+void Graph::PaintedDraw(const HWND& hwnd)
 {
 	PAINTSTRUCT pt;
 	HDC hdc = BeginPaint(hwnd, &pt);
@@ -105,7 +113,7 @@ void PaintedDraw(const HWND& hwnd)
 				BlockSize * j + BlockSize
 			};
 
-			switch (graph[i][j])
+			switch (m_graph[i][j])
 			{
 			case 0:
 				SelectObject(hdc, WhiteBrush);
@@ -124,7 +132,7 @@ void PaintedDraw(const HWND& hwnd)
 	}
 	EndPaint(hwnd,&pt);
 }
-void Dijkstra(const HWND& hwnd)
+void Graph::Dijkstra(const HWND& hwnd)
 {
 	int dx[] = { -1, 1,0,0 };
 	int dy[] = { 0, 0,-1,1 };
@@ -132,8 +140,8 @@ void Dijkstra(const HWND& hwnd)
 	vector<vector<bool>> visited(Row,vector<bool>(Column,false));
 	
 	queue<pair<int, int>> q;
-	q.push(startPos );
-	visited[startPos.first][startPos.second] = true;
+	q.push(m_startPos);
+	visited[m_startPos.first][m_startPos.second] = true;
 	auto sTime = chrono::high_resolution_clock::now();
 
 	while (!q.empty())
@@ -150,16 +158,16 @@ void Dijkstra(const HWND& hwnd)
 
 			if (rx < 0 || ry < 0 || Row <= rx || Column <= ry)
 				continue;
-			if (visited[rx][ry] || graph[rx][ry] == 3)
+			if (visited[rx][ry] || m_graph[rx][ry] == 3)
 				continue;
 		
-			if (graph[rx][ry] == 2)
+			if (m_graph[rx][ry] == 2)
 				goto search;
 			visited[rx][ry] = true;
 			q.push({ rx,ry });
 			
 			
-			graph[rx][ry] = 10;
+			m_graph[rx][ry] = 10;
 			DrawGrid(hwnd, { rx,ry });
 			Sleep(5);
 		}

@@ -16,3 +16,9 @@ extern RECT gWnd_rt;
 extern std::pair<int, int> startPos;
 extern std::pair<int, int> targetPos;
 extern std::pair<int, int> mousePos;
+
+extern HBRUSH BlackBrush;
+extern HBRUSH GreenBrush;
+extern HBRUSH RedBrush;
+extern HBRUSH WhiteBrush;
+extern HBRUSH GrayBrush;
