@@ -2,7 +2,6 @@
 #include <windows.h>
 #include <vector>
 
-
 #define BlockSize 20
 
 extern int Screen_Width;
@@ -10,16 +9,20 @@ extern int Screen_Height;
 extern int Wnd_Width;
 extern int Wnd_Height;
 
-extern RECT gWnd_rt;
-
+extern RECT gWnd_rt; // 실제 보이는 윈도우의 크기
 
 extern std::pair<int, int> startPos;
 extern std::pair<int, int> targetPos;
 extern std::pair<int, int> mousePos;
 
-extern HBRUSH BlackBrush;
-extern HBRUSH GreenBrush;
-extern HBRUSH RedBrush;
-extern HBRUSH WhiteBrush;
-extern HBRUSH GrayBrush;
-extern HBRUSH OrangeBrush;
+
+enum class EBrush
+{
+	WhiteBrush = 0,
+	GreenBrush,
+	RedBrush,
+	BlackBrush,
+	GrayBrush,
+	OrangeBrush,
+
+};

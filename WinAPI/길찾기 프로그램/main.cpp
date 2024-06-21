@@ -18,12 +18,6 @@ std::pair<int, int> mousePos;
 
 RECT gWnd_rt;
 
-HBRUSH BlackBrush;
-HBRUSH GreenBrush;
-HBRUSH RedBrush;
-HBRUSH WhiteBrush;
-HBRUSH GrayBrush;
-HBRUSH OrangeBrush;
 Graph graph;
 
 void InitWindow(HWND & hwnd)
@@ -61,12 +55,7 @@ void InitWindow(HWND & hwnd)
 		wndclass.hInstance,
 		nullptr
 	);
-	GreenBrush = CreateSolidBrush(RGB(0, 255, 0));
-	RedBrush = CreateSolidBrush(RGB(255, 0, 0));
-	BlackBrush = CreateSolidBrush(RGB(0, 0, 0));
-	WhiteBrush = CreateSolidBrush(RGB(255, 255, 255));
-	GrayBrush = CreateSolidBrush(RGB(125, 125, 125));
-	OrangeBrush = CreateSolidBrush(RGB(255, 127, 0));
+
 }
 int main()
 {
@@ -86,6 +75,13 @@ int main()
 		DispatchMessage(&msg);
 	}
 	return 0;
+}
+
+void ClickPos(LPARAM lParam, std::pair<int, int>& pos)
+{
+	int x = (int)LOWORD(lParam) / BlockSize;
+	int y = (int)HIWORD(lParam) / BlockSize;
+	pos = { x,y };
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -108,13 +104,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			return 0;
 		break;
 	case WM_MOUSEMOVE:
-		graph.ClickPos(lParam, mousePos);
+		ClickPos(lParam, mousePos);
 		if (LB)
 		{
-			std::pair<int, int> pos;
-			graph.ClickPos(lParam, pos);
-			graph.BlackFill(pos);
-			graph.DrawGrid(hWnd, pos);
+			/*std::pair<int, int> pos;
+			ClickPos(lParam, pos);*/
+			graph.m_graph[mousePos.first][mousePos.second] = int(EBrush::BlackBrush);
+			graph.DrawGrid(hWnd, mousePos, EBrush::BlackBrush);
 		}
 		break;
 
@@ -123,11 +119,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// 오른쪽 버튼 눌려져있을 때는 작동 X
 		LB = true;
 		std::pair<int, int> pos;
-		graph.ClickPos(lParam, pos);
+		ClickPos(lParam, pos);
 		if (!graph.IsVisited(pos))
 		{
-			graph.BlackFill(pos);
-			graph.DrawGrid(hWnd, pos);
+			graph.m_graph[pos.first][pos.second] = int(EBrush::BlackBrush);
+			graph.DrawGrid(hWnd, pos, EBrush::BlackBrush);
 		}
 		break;
 	}
@@ -151,21 +147,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case 's':
-			graph.WhiteFill(graph.startPos());
+			
 			graph.DrawGrid(hWnd, graph.startPos());
+			graph.m_graph[graph.startPos().first][graph.startPos().second] = int(EBrush::WhiteBrush);
 			graph.startPos(mousePos);
-
-			graph.GreenFill(graph.startPos());
-			graph.DrawGrid(hWnd, graph.startPos());
+			graph.m_graph[graph.startPos().first][graph.startPos().second] = int(EBrush::GreenBrush);
+			graph.DrawGrid(hWnd, graph.startPos(), EBrush::GreenBrush);
 
 			break;
 		case 'a':
-			graph.WhiteFill(graph.targetPos());
 			graph.DrawGrid(hWnd, graph.targetPos());
+			graph.m_graph[graph.startPos().first][graph.startPos().second] = int(EBrush::WhiteBrush);
 			graph.targetPos(mousePos);
-
-			graph.RedFill(graph.targetPos());
-			graph.DrawGrid(hWnd, graph.targetPos());
+			graph.m_graph[graph.targetPos().first][graph.targetPos().second] = int(EBrush::RedBrush);
+			graph.DrawGrid(hWnd, graph.targetPos(), EBrush::RedBrush);
 
 			break;
 		}
