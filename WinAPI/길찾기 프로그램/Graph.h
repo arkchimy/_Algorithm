@@ -5,25 +5,28 @@
 class Graph : public DrawModule
 {
 public:
-	//Graph();
-
+	Graph():Row(10),Column(10){};
+	~Graph() {};
 	void Initalize(const HWND& hwnd);
-	void PaintedDraw(const HWND& hwnd);
-	
+
+	//Window Message 관련 이벤트
+	void PaintedDraw(const HWND& hwnd); // WM_PAINT 일 때
+	void MouseLB(const HWND& hwnd, const std::pair<int,int>& idx, EBrush color);
+	void SelectStart(const HWND& hwnd, const std::pair<int, int>& idx);
+	void SelectEnd(const HWND& hwnd, const std::pair<int, int>& idx);
+
+	FORCEINLINE bool ChkColor(const std::pair<int, int>& idx, EBrush& color) { return m_graph[idx.first][idx.second] == int(color); }
 	bool IsVisited(const std::pair<int, int>& idx); //  마우스 꾹 눌렀을 때 연속클릭 안되게하는 방지
-	void ClickPos(LPARAM lParam, std::pair<int, int>& pos);
 
 	void ResetVisited();
 	void ResetGraph();
 	
+	//DrawModule 그리기 기능의 오버라이드
+	virtual void DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color = EBrush::WhiteBrush) override; // 
+
 	// 길찾기 알고리즘
 	void Dijkstra(const HWND& hwnd);
 	void AStar(const HWND& hwnd);
-
-	FORCEINLINE void startPos(const std::pair<int, int>& p) { m_startPos = p; }
-	FORCEINLINE void targetPos(const std::pair<int, int>& p) { m_targetPos = p; }
-	FORCEINLINE std::pair<int, int> startPos() { return m_startPos; }
-	FORCEINLINE std::pair<int, int> targetPos() { return m_targetPos; }
 
 public:
 	std::vector<std::vector<int>> m_graph;
@@ -32,5 +35,7 @@ public:
 	std::pair<int, int> m_startPos = { 0,0 };
 	std::pair<int, int> m_targetPos = { 0,0 };
 	
+	int Row;
+	int Column;
 };
 

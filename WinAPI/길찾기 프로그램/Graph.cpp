@@ -7,23 +7,23 @@
 #include <string>
 
 
-int Row;
-int Column;
-
 using namespace std;
+
+void Graph::Initalize(const HWND& hwnd)
+{
+
+	Row = (gWnd_rt.right - gWnd_rt.left) / BlockSize;
+	Column = (gWnd_rt.bottom - gWnd_rt.top) / BlockSize;
+
+	m_graph.resize(Row, vector<int>(Column, 0));
+	m_visited.resize(Row, vector<bool>(Column, false));
+}
 
 
 bool Graph::IsVisited(const pair<int, int>& idx)
 {
 	auto [row, col] = idx;
 	return m_visited[row][col];
-}
-
-void Graph::ClickPos(LPARAM lParam, std::pair<int, int>& pos)
-{
-	int x = (int)LOWORD(lParam) / BlockSize;
-	int y = (int)HIWORD(lParam) / BlockSize;
-	pos = { x,y };
 }
 
 void Graph::ResetVisited()
@@ -36,14 +36,11 @@ void Graph::ResetGraph()
 	for (std::vector<int>& row : m_graph)
 		fill(row.begin(), row.end(), 0);
 }
-void Graph::Initalize(const HWND& hwnd)
+void Graph::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color)
 {
-
-	Row = (gWnd_rt.right - gWnd_rt.left) / BlockSize;
-	Column = (gWnd_rt.bottom - gWnd_rt.top) / BlockSize;
-
-	m_graph.resize( Row, vector<int>(Column, 0));
-	m_visited.resize( Row, vector<bool>(Column, false));
+	m_graph[idx.first][idx.second] = int(color);
+	m_visited[idx.first][idx.second] = true;
+	DrawModule::DrawGrid(hwnd, idx, color);
 }
 
 void Graph::PaintedDraw(const HWND& hwnd)
@@ -55,18 +52,38 @@ void Graph::PaintedDraw(const HWND& hwnd)
 	{
 		for (int j = 0; j < Column; j++)
 		{
-			RECT rt =
-			{
-				BlockSize * i,
-				BlockSize * j,
-				BlockSize * i + BlockSize,
-				BlockSize * j + BlockSize
-			};
 			DrawGrid(hwnd, { i,j }, EBrush(m_graph[i][j]));
 		}
 	}
 	EndPaint(hwnd,&pt);
 }
+void Graph::MouseLB(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color)
+{
+	// 이미 방문 했다면 리턴
+	if (IsVisited(idx))
+		return;
+	if (ChkColor(idx, color)) 
+	{
+		DrawGrid(hwnd, idx, EBrush::WhiteBrush);
+		return;
+	}
+	DrawGrid(hwnd, idx, color);
+}
+
+void Graph::SelectStart(const HWND& hwnd, const pair<int, int>& idx)
+{
+	DrawGrid(hwnd, m_startPos, EBrush::WhiteBrush);
+	m_startPos = idx;
+	DrawGrid(hwnd, m_startPos, EBrush::GreenBrush);
+}
+
+void Graph::SelectEnd(const HWND& hwnd, const pair<int, int>& idx)
+{
+	DrawGrid(hwnd, m_targetPos, EBrush::WhiteBrush);
+	m_targetPos = idx;
+	DrawGrid(hwnd, m_targetPos, EBrush::RedBrush);
+}
+
 void Graph::Dijkstra(const HWND& hwnd)
 {
 	int dx[] = { -1, 1,0,0 ,-1,1,-1,1};
@@ -97,7 +114,16 @@ void Graph::Dijkstra(const HWND& hwnd)
 				continue;
 			if (visited[rx][ry] || m_graph[rx][ry] == int(EBrush::BlackBrush))
 				continue;
-		
+			//대각선의 경우에
+			
+			if (i == 4 && m_graph[rx + 1][ry] == int(EBrush::BlackBrush) && m_graph[rx][ry + 1] == int(EBrush::BlackBrush))
+				continue;
+			if (i == 5 && m_graph[rx + 1][ry] == int(EBrush::BlackBrush) && m_graph[rx][ry - 1] == int(EBrush::BlackBrush))
+				continue;
+			if (i == 6 && m_graph[rx][ry - 1] == int(EBrush::BlackBrush) && m_graph[rx ][ry + 1] == int(EBrush::BlackBrush))
+				continue;
+			if (i == 7 && m_graph[rx - 1][ry] == int(EBrush::BlackBrush) && m_graph[rx][ry - 1] == int(EBrush::BlackBrush))
+				continue;
 			if (m_graph[rx][ry] == int(EBrush::RedBrush))
 			{
 				for (auto& current : route)

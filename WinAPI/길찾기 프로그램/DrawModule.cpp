@@ -8,9 +8,6 @@
 
 using namespace std;
 
-std::vector<std::vector<int> > gGraph;
-std::vector<std::vector<bool>> gVisited;
-
 void DrawModule::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color)
 {
 	//static  변수를 DrawGrid 내에 삽입함으로써 접근성 제어 - 전역변수의 단점을 지움

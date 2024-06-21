@@ -11,11 +11,6 @@ extern int Wnd_Height;
 
 extern RECT gWnd_rt; // 실제 보이는 윈도우의 크기
 
-extern std::pair<int, int> startPos;
-extern std::pair<int, int> targetPos;
-extern std::pair<int, int> mousePos;
-
-
 enum class EBrush
 {
 	WhiteBrush = 0,

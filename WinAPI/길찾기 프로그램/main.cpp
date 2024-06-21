@@ -105,26 +105,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_MOUSEMOVE:
 		ClickPos(lParam, mousePos);
+		
 		if (LB)
 		{
-			/*std::pair<int, int> pos;
-			ClickPos(lParam, pos);*/
-			graph.m_graph[mousePos.first][mousePos.second] = int(EBrush::BlackBrush);
-			graph.DrawGrid(hWnd, mousePos, EBrush::BlackBrush);
+			graph.MouseLB(hWnd, mousePos, EBrush::BlackBrush);
 		}
 		break;
 
 	case WM_LBUTTONDOWN:
 	{
-		// 오른쪽 버튼 눌려져있을 때는 작동 X
 		LB = true;
-		std::pair<int, int> pos;
-		ClickPos(lParam, pos);
-		if (!graph.IsVisited(pos))
-		{
-			graph.m_graph[pos.first][pos.second] = int(EBrush::BlackBrush);
-			graph.DrawGrid(hWnd, pos, EBrush::BlackBrush);
-		}
+		graph.MouseLB(hWnd, mousePos, EBrush::BlackBrush);
 		break;
 	}
 	case WM_LBUTTONUP:
@@ -147,21 +138,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case 's':
-			
-			graph.DrawGrid(hWnd, graph.startPos());
-			graph.m_graph[graph.startPos().first][graph.startPos().second] = int(EBrush::WhiteBrush);
-			graph.startPos(mousePos);
-			graph.m_graph[graph.startPos().first][graph.startPos().second] = int(EBrush::GreenBrush);
-			graph.DrawGrid(hWnd, graph.startPos(), EBrush::GreenBrush);
-
+			graph.SelectStart(hWnd, mousePos);
 			break;
 		case 'a':
-			graph.DrawGrid(hWnd, graph.targetPos());
-			graph.m_graph[graph.startPos().first][graph.startPos().second] = int(EBrush::WhiteBrush);
-			graph.targetPos(mousePos);
-			graph.m_graph[graph.targetPos().first][graph.targetPos().second] = int(EBrush::RedBrush);
-			graph.DrawGrid(hWnd, graph.targetPos(), EBrush::RedBrush);
-
+			graph.SelectEnd(hWnd, mousePos);
 			break;
 		}
 		break;
