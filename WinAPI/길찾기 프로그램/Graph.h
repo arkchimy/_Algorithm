@@ -2,6 +2,8 @@
 class Graph
 {
 public:
+	//Graph();
+
 	void Initalize(const HWND& hwnd);
 	void PaintedDraw(const HWND& hwnd);
 	void DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx); // GetDC를 이용한 Draw
@@ -21,6 +23,7 @@ public:
 	void GreenFill(const std::pair<int, int>& node);
 	void RedFill(const std::pair<int, int>& node);
 	void BlackFill(const std::pair<int, int>& node);
+	void OrangeFill(const std::pair<int, int>& node);
 
 private:
 	std::vector<std::vector<int>> m_graph;

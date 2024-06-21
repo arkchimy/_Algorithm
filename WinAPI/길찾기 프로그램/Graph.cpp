@@ -10,8 +10,6 @@ int Column;
 
 using namespace std;
 
-
-
 void Graph::WhiteFill(const pair<int, int>& node)
 {
 	m_graph[node.first][node.second] = 0;
@@ -27,6 +25,10 @@ void Graph::RedFill(const pair<int, int>& node)
 void Graph::BlackFill(const pair<int, int>& node)
 {
 	m_graph[node.first][node.second] = 3;
+}
+void Graph::OrangeFill(const pair<int, int>& node)
+{
+	m_graph[node.first][node.second] = 10;
 }
 
 
@@ -48,6 +50,9 @@ void Graph::DrawGrid(const HWND& hwnd, const pair<int, int>& idx)
 			break;
 		case 3:
 			SelectObject(hdc, BlackBrush);
+			break;
+		case 10:
+			SelectObject(hdc, OrangeBrush);
 			break;
 		default:
 			SelectObject(hdc, GrayBrush);
@@ -134,40 +139,52 @@ void Graph::PaintedDraw(const HWND& hwnd)
 }
 void Graph::Dijkstra(const HWND& hwnd)
 {
-	int dx[] = { -1, 1,0,0 };
-	int dy[] = { 0, 0,-1,1 };
+	int dx[] = { -1, 1,0,0 ,-1,1,-1,1};
+	int dy[] = { 0, 0,-1,1 ,-1,-1,1,1};
 
 	vector<vector<bool>> visited(Row,vector<bool>(Column,false));
 	
-	queue<pair<int, int>> q;
-	q.push(m_startPos);
+	queue<pair < pair<int, int>,vector<pair<int,int> > >> q;
+	q.push({ m_startPos,vector<pair<int,int>>() });
+
 	visited[m_startPos.first][m_startPos.second] = true;
 	auto sTime = chrono::high_resolution_clock::now();
 
+
 	while (!q.empty())
 	{
-		auto [x,y] = q.front();
+		auto [pos,route] = q.front();
 		q.pop();
 
 		int rx, ry;
 		
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 8; i++)
 		{
-			rx = x + dx[i];
-			ry = y + dy[i];
+			rx = pos.first + dx[i];
+			ry = pos.second + dy[i];
 
 			if (rx < 0 || ry < 0 || Row <= rx || Column <= ry)
 				continue;
 			if (visited[rx][ry] || m_graph[rx][ry] == 3)
 				continue;
 		
-			if (m_graph[rx][ry] == 2)
+			if (m_graph[rx][ry] == 2) 
+			{
+				for (auto& current : route)
+				{
+					m_graph[current.first][current.second] = 10;
+					DrawGrid(hwnd, { current.first,current.second });
+					Sleep(5);
+				}
 				goto search;
+			}
 			visited[rx][ry] = true;
-			q.push({ rx,ry });
+			vector<pair<int, int>> lroute = route;
+			lroute.push_back({ rx,ry });
+
+			q.push({ {rx,ry} , lroute });
 			
-			
-			m_graph[rx][ry] = 10;
+			m_graph[rx][ry] = 9;
 			DrawGrid(hwnd, { rx,ry });
 			Sleep(5);
 		}

@@ -22,3 +22,4 @@ extern HBRUSH GreenBrush;
 extern HBRUSH RedBrush;
 extern HBRUSH WhiteBrush;
 extern HBRUSH GrayBrush;
+extern HBRUSH OrangeBrush;

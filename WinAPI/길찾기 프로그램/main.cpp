@@ -23,7 +23,7 @@ HBRUSH GreenBrush;
 HBRUSH RedBrush;
 HBRUSH WhiteBrush;
 HBRUSH GrayBrush;
-
+HBRUSH OrangeBrush;
 Graph graph;
 
 void InitWindow(HWND & hwnd)
@@ -66,6 +66,7 @@ void InitWindow(HWND & hwnd)
 	BlackBrush = CreateSolidBrush(RGB(0, 0, 0));
 	WhiteBrush = CreateSolidBrush(RGB(255, 255, 255));
 	GrayBrush = CreateSolidBrush(RGB(125, 125, 125));
+	OrangeBrush = CreateSolidBrush(RGB(255, 127, 0));
 }
 int main()
 {
