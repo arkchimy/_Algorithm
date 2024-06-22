@@ -26,6 +26,14 @@ bool Graph::IsVisited(const pair<int, int>& idx)
 	return m_visited[row][col];
 }
 
+bool Graph::IsWall(const std::pair<int, int>& idx)
+{
+	if (idx.first >= Row || idx.second >= Column)
+		return false;
+	
+	return m_graph[idx.first][idx.second] == int(EBrush::BlackBrush);;
+}
+
 void Graph::ResetVisited()
 {
 	for (std::vector<bool>& row : m_visited)
@@ -116,14 +124,27 @@ void Graph::Dijkstra(const HWND& hwnd)
 				continue;
 			//대각선의 경우에
 			
-			if (i == 4 && m_graph[rx + 1][ry] == int(EBrush::BlackBrush) && m_graph[rx][ry + 1] == int(EBrush::BlackBrush))
-				continue;
-			if (i == 5 && m_graph[rx + 1][ry] == int(EBrush::BlackBrush) && m_graph[rx][ry - 1] == int(EBrush::BlackBrush))
-				continue;
-			if (i == 6 && m_graph[rx][ry - 1] == int(EBrush::BlackBrush) && m_graph[rx ][ry + 1] == int(EBrush::BlackBrush))
-				continue;
-			if (i == 7 && m_graph[rx - 1][ry] == int(EBrush::BlackBrush) && m_graph[rx][ry - 1] == int(EBrush::BlackBrush))
-				continue;
+			switch (i)
+			{
+			case 4:
+				if(IsWall({ rx + 1,ry }) && IsWall({ rx ,ry + 1 }))
+					continue;
+				break;
+			case 5:
+				if (IsWall({ rx + 1,ry }) && IsWall({ rx ,ry - 1 }))
+					continue;
+				break;
+			case 6:
+				if (IsWall({ rx ,ry - 1 }) && IsWall({ rx ,ry + 1 }))
+					continue;
+				break;
+			case 7:
+				if (IsWall({ rx - 1,ry }) && IsWall({ rx ,ry - 1 }))
+					continue;
+				break;
+
+			}
+	
 			if (m_graph[rx][ry] == int(EBrush::RedBrush))
 			{
 				for (auto& current : route)

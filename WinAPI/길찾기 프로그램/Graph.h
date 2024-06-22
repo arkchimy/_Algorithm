@@ -12,12 +12,13 @@ public:
 	//Window Message 관련 이벤트
 	void PaintedDraw(const HWND& hwnd); // WM_PAINT 일 때
 	void MouseLB(const HWND& hwnd, const std::pair<int,int>& idx, EBrush color);
+
 	void SelectStart(const HWND& hwnd, const std::pair<int, int>& idx);
 	void SelectEnd(const HWND& hwnd, const std::pair<int, int>& idx);
 
 	FORCEINLINE bool ChkColor(const std::pair<int, int>& idx, EBrush& color) { return m_graph[idx.first][idx.second] == int(color); }
 	bool IsVisited(const std::pair<int, int>& idx); //  마우스 꾹 눌렀을 때 연속클릭 안되게하는 방지
-
+	bool IsWall(const std::pair<int, int>& idx);
 	void ResetVisited();
 	void ResetGraph();
 	
