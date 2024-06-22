@@ -131,7 +131,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		if (wParam == VK_SPACE)
 		{
-			graph.Dijkstra(hWnd);
+			//graph.Dijkstra(hWnd);
+			graph.AStar(hWnd);
 		}
 		break;
 	case WM_CHAR:

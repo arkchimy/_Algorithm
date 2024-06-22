@@ -28,10 +28,9 @@ bool Graph::IsVisited(const pair<int, int>& idx)
 
 bool Graph::IsWall(const std::pair<int, int>& idx)
 {
-	if (idx.first >= Row || idx.second >= Column)
-		return false;
-	
-	return m_graph[idx.first][idx.second] == int(EBrush::BlackBrush);;
+	if ((0 <= idx.first && idx.first < Row) && (0 <= idx.second && idx.second < Column))
+		return m_graph[idx.first][idx.second] == int(EBrush::BlackBrush);
+	return false;
 }
 
 void Graph::ResetVisited()
@@ -181,7 +180,93 @@ search:
 	대각선은 1.4 = 루트 2로 취급 함.
 
 */
+
+
+
+void Graph::AStarDistance(priority_queue<Node, vector<Node>, less<Node>>& q, const std::pair<int, int>& pos)
+{
+	int dx[] = { -1,1,0,0,-1,-1,1,1 };
+	int dy[] = { 0,0,-1,1,-1,1,-1,1 };
+
+	if (q.empty())
+		return;
+	Node preNode = q.top();
+	q.pop();
+	Node node;
+
+	auto& [x, y] = pos;
+	for (int i = 0; i < 8; i++)
+	{
+		int rx = x + dx[i];
+		int ry = y + dy[i];
+		if (rx == m_targetPos.first && ry == m_targetPos.second)
+		{
+			node = Node(rx, ry, m_targetPos, preNode.currentCost + 10);
+			q.emplace(node);
+			continue;
+		}
+		if (rx < 0 || ry < 0 || Row <= rx || Column <= ry)
+			continue;
+		if (m_visited[rx][ry] || IsWall({ rx,ry }))
+			continue;
+		//대각선의 경우에
+		m_visited[rx][ry] = true;
+		switch (i)
+		{
+		case 4:
+			if (IsWall({ rx + 1,ry }) && IsWall({ rx ,ry + 1 }))
+				continue;
+			break;
+		case 5:
+			if (IsWall({ rx + 1,ry }) && IsWall({ rx ,ry - 1 }))
+				continue;
+			break;
+		case 6:
+			if (IsWall({ rx ,ry - 1 }) && IsWall({ rx ,ry + 1 }))
+				continue;
+			break;
+		case 7:
+			if (IsWall({ rx - 1,ry }) && IsWall({ rx ,ry - 1 }))
+				continue;
+			break;
+		default:
+			node = Node(rx, ry, m_targetPos, preNode.currentCost + 10);
+			q.emplace(node);
+			continue;
+		}
+		node = Node(rx, ry, m_targetPos, preNode.currentCost + 14);
+		q.emplace(node);
+	}
+	
+}
+
 void Graph::AStar(const HWND& hwnd)
 {
-	
+	auto sTime = chrono::high_resolution_clock::now();
+
+	pair<int, int> current = m_startPos;
+	priority_queue<Node,vector<Node>, less<Node>> q;
+	Node node = Node(current.first, current.second, m_targetPos, 0);
+	q.push(node);
+	AStarDistance(q,current);
+
+	while (!q.empty())
+	{
+		auto& current = q.top();
+		q.pop();
+		auto& [x, y] = current.idx;
+		if (x == m_targetPos.first && y == m_targetPos.second)
+		{
+			break;
+		}
+		DrawGrid(hwnd, { x, y }, EBrush::GrayBrush);
+		Sleep(5);
+		AStarDistance(q, {x,y});
+	}
+	double number = (chrono::high_resolution_clock::now() - sTime).count() / pow(1000, 3);
+	wchar_t buffer[32];
+	swprintf(buffer, 32, L"%lf 시간이 소요되었습니다.", number);
+	string str = to_string((chrono::high_resolution_clock::now() - sTime).count() / pow(1000, 3));
+	MessageBox(hwnd, buffer, L"AStart 소요시간", MB_OK);
+	ResetVisited();
 }
