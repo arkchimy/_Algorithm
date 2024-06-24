@@ -8,6 +8,15 @@
 
 using namespace std;
 
+void TextureCoordinate(const pair<int, int>& idx, pair<int, int>& rt)
+{
+	rt = { idx.second,idx.first };
+}
+void ArrayCoordinate(const pair<int, int>& idx, pair<int, int>& rt)
+{
+	rt = { idx.second,idx.first };
+}
+
 void Graph::Initalize(const HWND& hwnd)
 {
 
@@ -25,7 +34,7 @@ bool Graph::IsVisited(const pair<int, int>& idx)
 	return m_visited[row][col];
 }
 
-bool Graph::IsWall(const std::pair<int, int>& idx)
+bool Graph::IsWall(const std::pair<int, int>& idx) // array
 {
 	if ((0 <= idx.first && idx.first < Row) && (0 <= idx.second && idx.second < Column))
 		return m_graph[idx.first][idx.second] == int(EBrush::BlackBrush);
@@ -44,7 +53,7 @@ void Graph::ResetGraph()
 }
 void Graph::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color)
 {
-	m_graph[idx.first][idx.second] = int(color);
+	m_graph[idx.second][idx.first] = int(color);
 	DrawModule::DrawGrid(hwnd, idx, color);
 }
 
@@ -64,16 +73,18 @@ void Graph::PaintedDraw(const HWND& hwnd)
 }
 void Graph::MouseLB(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color)
 {
+	pair<int, int> array_idx;
+	ArrayCoordinate(idx, array_idx);
 	// 이미 방문 했다면 리턴
-	if (IsVisited(idx))
+	if (IsVisited(array_idx))
 		return;
-	if (ChkColor(idx, color)) 
+	if (ChkColor(array_idx, color))
 	{
-		m_visited[idx.first][idx.second] = true;
+		m_visited[array_idx.first][array_idx.second] = true;
 		DrawGrid(hwnd, idx, EBrush::WhiteBrush);
 		return;
 	}
-	m_visited[idx.first][idx.second] = true;
+	m_visited[array_idx.first][array_idx.second] = true;
 	DrawGrid(hwnd, idx, color);
 }
 
@@ -201,12 +212,16 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 	{
 		int rx = x + dx[i];
 		int ry = y + dy[i];
-		if (rx == m_targetPos.first && ry == m_targetPos.second)
+		pair<int, int> texturecoordinate_idx;
+		TextureCoordinate({ rx,ry }, texturecoordinate_idx);
+
+		if (texturecoordinate_idx.first == m_targetPos.first && 
+			texturecoordinate_idx.second == m_targetPos.second)
 		{
 			if(i < 4)
-				node = Node(rx, ry, m_targetPos, preNode.currentCost + 10);
+				node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 10);
 			else
-				node = Node(rx, ry, m_targetPos, preNode.currentCost + 14);
+				node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 14);
 			q.emplace(node);
 
 			break;
@@ -215,8 +230,10 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 			continue;
 		if (m_visited[rx][ry] || IsWall({ rx,ry }))
 			continue;
-		DrawGrid(hwnd, { rx, ry }, EBrush::GreenBrush);
+
+		DrawGrid(hwnd, texturecoordinate_idx, EBrush::GreenBrush);
 		//대각선의 경우에
+		// is Wall 은 arrayidx
 		switch (i)
 		{
 		case 4:
@@ -236,39 +253,49 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 				continue;
 			break;
 		default:
-			node = Node(rx, ry, m_targetPos, preNode.currentCost + 10);
+			node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 10);
 			q.emplace(node);
 			continue;
 		}
-		node = Node(rx, ry, m_targetPos, preNode.currentCost + 14);
+		node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 14);
 		q.emplace(node);
 	}
 	
 }
+
 
 void Graph::AStar(const HWND& hwnd)
 {
 	ResetVisited();
 	auto sTime = chrono::high_resolution_clock::now();
 
-	pair<int, int> current = m_startPos;
-	priority_queue<Node,vector<Node>> q;
-	Node node = Node(current.first, current.second, m_targetPos, 0);
+	pair<int, int> array_idx;
+	ArrayCoordinate(m_startPos, array_idx); //  m_startPos 는 texturecoordinate 임
+	priority_queue<Node,vector<Node>> q; // Node에는 texturecoordinate로 입력
+
+	Node node = Node(m_startPos.first, m_startPos.second, m_targetPos, 0);
 	q.push(node);
-	m_visited[current.first][current.second] = true;
-	AStarDistance(hwnd,q,current);
+
+	m_visited[array_idx.first][array_idx.second] = true; //  행렬
+	AStarDistance(hwnd,q, array_idx);
 	
 	while (!q.empty())
 	{
 		auto current = q.top();
 		q.pop();
-		auto& [x, y] = current.idx;
+
+		pair<int, int> array_idx;
+		ArrayCoordinate(current.idx, array_idx);
+
+		auto& [x, y] = array_idx;
 		m_visited[x][y] = true;
-		if (x == m_targetPos.first && y == m_targetPos.second)
+
+		if (y == m_targetPos.first && x == m_targetPos.second)
 		{
 			break;
 		}
-		DrawGrid(hwnd, { x, y }, EBrush::OrangeBrush);
+
+		DrawGrid(hwnd, { y, x }, EBrush::OrangeBrush);
 		AStarDistance(hwnd,q, {x,y});
 	}
 	double number = (chrono::high_resolution_clock::now() - sTime).count() / pow(1000, 3);

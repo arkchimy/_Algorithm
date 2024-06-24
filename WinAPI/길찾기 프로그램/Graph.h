@@ -5,6 +5,7 @@
 #include <queue>
 #include <iostream>
 
+// texturecoordinate 변환된 값
 struct Node
 {
 	Node() = default;
@@ -19,6 +20,9 @@ struct Node
 		total = needCost - currentCost;
 		std::cout << "  total : " << total << "  needCost : " << needCost << "  currentCost : " << currentCost << "\n";
 	};
+	Node(const std::pair<int, int> p, std::pair<int, int>& target, int cost)
+		:Node(p.first, p.second, target, cost) {}
+	
 	std::pair<int, int> idx;
 
 	int currentCost; //현재 소요된 cost
@@ -62,12 +66,12 @@ public:
 	void ResetGraph();
 	
 	//DrawModule 그리기 기능의 오버라이드
-	virtual void DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color = EBrush::WhiteBrush) override; // 
+	virtual void DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color = EBrush::WhiteBrush) override; //  texturecoordinate
 
 	// 길찾기 알고리즘
 	void Dijkstra(const HWND& hwnd);
 	void AStar(const HWND& hwnd);
-	void AStarDistance(const HWND& hwnd,std::priority_queue<Node, std::vector<Node>>& q, const std::pair<int, int>& pos);
+	void AStarDistance(const HWND& hwnd,std::priority_queue<Node, std::vector<Node>>& q, const std::pair<int, int>& pos);//arraycoordinate
 
 public:
 
