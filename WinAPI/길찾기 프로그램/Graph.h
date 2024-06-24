@@ -17,7 +17,7 @@ struct Node
 		needCost = len * 14 +
 			 (abs(target.first  - x ) - len) * 10 +
 			 (abs(target.second - y ) - len) * 10;
-		total = needCost - currentCost;
+		total = needCost + currentCost;
 		std::cout << "  total : " << total << "  needCost : " << needCost << "  currentCost : " << currentCost << "\n";
 	};
 	Node(const std::pair<int, int> p, std::pair<int, int>& target, int cost)
@@ -67,7 +67,7 @@ public:
 	
 	//DrawModule 그리기 기능의 오버라이드
 	virtual void DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color = EBrush::WhiteBrush) override; //  texturecoordinate
-
+	virtual void TextGrid(const HWND& hwnd, const std::pair<int, int>& idx,LPCWSTR str);
 	// 길찾기 알고리즘
 	void Dijkstra(const HWND& hwnd);
 	void AStar(const HWND& hwnd);

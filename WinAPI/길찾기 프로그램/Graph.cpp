@@ -57,6 +57,21 @@ void Graph::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush co
 	DrawModule::DrawGrid(hwnd, idx, color);
 }
 
+void Graph::TextGrid(const HWND& hwnd, const std::pair<int, int>& idx,LPCWSTR str)
+{
+	HDC hdc = GetDC(hwnd);
+	RECT rt = {
+		BlockSize * idx.first,
+		BlockSize * idx.second,
+		BlockSize * idx.first + BlockSize,
+		BlockSize * idx.second + BlockSize
+	};
+
+	DrawText(hdc, str,3,&rt, DT_CENTER | DT_VCENTER);
+	ReleaseDC(hwnd,hdc);
+
+}
+
 void Graph::PaintedDraw(const HWND& hwnd)
 {
 	PAINTSTRUCT pt;
@@ -255,10 +270,20 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 		default:
 			node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 10);
 			q.emplace(node);
+			// int를 LPCWSTR 문자열로 변환
+			wchar_t buffer[20];
+			swprintf_s(buffer, sizeof(buffer) / sizeof(wchar_t), L"%d", node.total);
+			TextGrid(hwnd, texturecoordinate_idx, buffer);
 			continue;
 		}
 		node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 14);
 		q.emplace(node);
+
+		wchar_t buffer[20];
+		swprintf_s(buffer, sizeof(buffer) / sizeof(wchar_t), L"%d", node.total);
+		TextGrid(hwnd, texturecoordinate_idx, buffer);
+
+		
 	}
 	
 }
@@ -288,7 +313,7 @@ void Graph::AStar(const HWND& hwnd)
 		ArrayCoordinate(current.idx, array_idx);
 
 		auto& [x, y] = array_idx;
-		m_visited[x][y] = true;
+		//m_visited[x][y] = true;
 
 		if (y == m_targetPos.first && x == m_targetPos.second)
 		{
@@ -296,6 +321,7 @@ void Graph::AStar(const HWND& hwnd)
 		}
 
 		DrawGrid(hwnd, { y, x }, EBrush::OrangeBrush);
+		q.push(current);
 		AStarDistance(hwnd,q, {x,y});
 	}
 	double number = (chrono::high_resolution_clock::now() - sTime).count() / pow(1000, 3);
