@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <vector>
 
-#define BlockSize 20
+#define BlockSize 50
 
 extern int Screen_Width;
 extern int Screen_Height;
@@ -19,5 +19,6 @@ enum class EBrush
 	BlackBrush,
 	GrayBrush,
 	OrangeBrush,
+	BlueBrush,
 
 };

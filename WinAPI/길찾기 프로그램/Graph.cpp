@@ -6,7 +6,6 @@
 #include <iostream>
 #include <string>
 
-
 using namespace std;
 
 void Graph::Initalize(const HWND& hwnd)
@@ -46,7 +45,6 @@ void Graph::ResetGraph()
 void Graph::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color)
 {
 	m_graph[idx.first][idx.second] = int(color);
-	m_visited[idx.first][idx.second] = true;
 	DrawModule::DrawGrid(hwnd, idx, color);
 }
 
@@ -71,9 +69,11 @@ void Graph::MouseLB(const HWND& hwnd, const std::pair<int, int>& idx, EBrush col
 		return;
 	if (ChkColor(idx, color)) 
 	{
+		m_visited[idx.first][idx.second] = true;
 		DrawGrid(hwnd, idx, EBrush::WhiteBrush);
 		return;
 	}
+	m_visited[idx.first][idx.second] = true;
 	DrawGrid(hwnd, idx, color);
 }
 
@@ -81,7 +81,7 @@ void Graph::SelectStart(const HWND& hwnd, const pair<int, int>& idx)
 {
 	DrawGrid(hwnd, m_startPos, EBrush::WhiteBrush);
 	m_startPos = idx;
-	DrawGrid(hwnd, m_startPos, EBrush::GreenBrush);
+	DrawGrid(hwnd, m_startPos, EBrush::BlueBrush);
 }
 
 void Graph::SelectEnd(const HWND& hwnd, const pair<int, int>& idx)
@@ -151,7 +151,7 @@ void Graph::Dijkstra(const HWND& hwnd)
 					
 					m_graph[current.first][current.second] = int(EBrush::OrangeBrush);
 					DrawGrid(hwnd, { current.first,current.second },EBrush::OrangeBrush);
-					Sleep(5);
+					
 				}
 				goto search;
 			}
@@ -162,8 +162,9 @@ void Graph::Dijkstra(const HWND& hwnd)
 			q.push({ {rx,ry} , lroute });
 			
 			m_graph[rx][ry] = int(EBrush::GrayBrush);
+			m_visited[rx][ry] = true;
 			DrawGrid(hwnd, { rx,ry },EBrush::GrayBrush);
-			Sleep(5);
+			
 		}
 		
 	}
@@ -183,13 +184,14 @@ search:
 
 
 
-void Graph::AStarDistance(priority_queue<Node, vector<Node>, less<Node>>& q, const std::pair<int, int>& pos)
+void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q, const std::pair<int, int>& pos)
 {
 	int dx[] = { -1,1,0,0,-1,-1,1,1 };
 	int dy[] = { 0,0,-1,1,-1,1,-1,1 };
-
+	
 	if (q.empty())
 		return;
+	
 	Node preNode = q.top();
 	q.pop();
 	Node node;
@@ -201,16 +203,20 @@ void Graph::AStarDistance(priority_queue<Node, vector<Node>, less<Node>>& q, con
 		int ry = y + dy[i];
 		if (rx == m_targetPos.first && ry == m_targetPos.second)
 		{
-			node = Node(rx, ry, m_targetPos, preNode.currentCost + 10);
+			if(i < 4)
+				node = Node(rx, ry, m_targetPos, preNode.currentCost + 10);
+			else
+				node = Node(rx, ry, m_targetPos, preNode.currentCost + 14);
 			q.emplace(node);
-			continue;
+
+			break;
 		}
 		if (rx < 0 || ry < 0 || Row <= rx || Column <= ry)
 			continue;
 		if (m_visited[rx][ry] || IsWall({ rx,ry }))
 			continue;
+		DrawGrid(hwnd, { rx, ry }, EBrush::GreenBrush);
 		//대각선의 경우에
-		m_visited[rx][ry] = true;
 		switch (i)
 		{
 		case 4:
@@ -242,26 +248,28 @@ void Graph::AStarDistance(priority_queue<Node, vector<Node>, less<Node>>& q, con
 
 void Graph::AStar(const HWND& hwnd)
 {
+	ResetVisited();
 	auto sTime = chrono::high_resolution_clock::now();
 
 	pair<int, int> current = m_startPos;
-	priority_queue<Node,vector<Node>, less<Node>> q;
+	priority_queue<Node,vector<Node>> q;
 	Node node = Node(current.first, current.second, m_targetPos, 0);
 	q.push(node);
-	AStarDistance(q,current);
-
+	m_visited[current.first][current.second] = true;
+	AStarDistance(hwnd,q,current);
+	
 	while (!q.empty())
 	{
-		auto& current = q.top();
+		auto current = q.top();
 		q.pop();
 		auto& [x, y] = current.idx;
+		m_visited[x][y] = true;
 		if (x == m_targetPos.first && y == m_targetPos.second)
 		{
 			break;
 		}
-		DrawGrid(hwnd, { x, y }, EBrush::GrayBrush);
-		Sleep(5);
-		AStarDistance(q, {x,y});
+		DrawGrid(hwnd, { x, y }, EBrush::OrangeBrush);
+		AStarDistance(hwnd,q, {x,y});
 	}
 	double number = (chrono::high_resolution_clock::now() - sTime).count() / pow(1000, 3);
 	wchar_t buffer[32];

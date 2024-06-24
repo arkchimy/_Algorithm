@@ -46,7 +46,7 @@ void InitWindow(HWND & hwnd)
 		wndclass.lpszClassName,
 		L"길찾기 프로그램",
 		WS_OVERLAPPEDWINDOW,
-		(Screen_Width / 2) - (Wnd_Width / 2),
+		(Wnd_Width / 2),
 		(Screen_Height / 2) - (Wnd_Height / 2),
 		gWnd_rt.right - gWnd_rt.left,
 		gWnd_rt.bottom - gWnd_rt.top,

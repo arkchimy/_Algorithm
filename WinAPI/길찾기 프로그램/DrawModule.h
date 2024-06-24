@@ -1,5 +1,5 @@
 #pragma once
-#define BRUSH_CNT 6
+#define BRUSH_CNT 7
 
 
 class DrawModule

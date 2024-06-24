@@ -3,6 +3,7 @@
 #include "DrawModule.h"
 #include <cmath>
 #include <queue>
+#include <iostream>
 
 struct Node
 {
@@ -12,8 +13,11 @@ struct Node
 	{
 		currentCost = cost;
 		int len = min(std::abs(target.first - x), std::abs(target.second - y));
-		total = len * 14 + abs(target.first - len) * 10 + len * 14 + abs(target.second - len) * 10;
-		needCost = total - currentCost;
+		needCost = len * 14 +
+			 (abs(target.first  - x ) - len) * 10 +
+			 (abs(target.second - y ) - len) * 10;
+		total = needCost - currentCost;
+		std::cout << "  total : " << total << "  needCost : " << needCost << "  currentCost : " << currentCost << "\n";
 	};
 	std::pair<int, int> idx;
 
@@ -26,7 +30,7 @@ struct Node
 		{
 			if (needCost != n2.needCost)
 				return needCost > n2.needCost;
-			return currentCost > n2.currentCost;
+			return currentCost < n2.currentCost;
 		}
 		return total > n2.total;
 	}
@@ -63,7 +67,7 @@ public:
 	// 길찾기 알고리즘
 	void Dijkstra(const HWND& hwnd);
 	void AStar(const HWND& hwnd);
-	void AStarDistance(std::priority_queue<Node, std::vector<Node>, std::less<Node>>& q, const std::pair<int, int>& pos);
+	void AStarDistance(const HWND& hwnd,std::priority_queue<Node, std::vector<Node>>& q, const std::pair<int, int>& pos);
 
 public:
 

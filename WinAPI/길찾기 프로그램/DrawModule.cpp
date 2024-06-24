@@ -18,7 +18,8 @@ void DrawModule::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBru
 		CreateSolidBrush(RGB(255, 0, 0)),
 		CreateSolidBrush(RGB(0, 0, 0)),
 		CreateSolidBrush(RGB(125, 125, 125)),
-		CreateSolidBrush(RGB(255, 127, 0))
+		CreateSolidBrush(RGB(255, 127, 0)),
+		CreateSolidBrush(RGB(0, 125, 255)),
 	};
 
 	HDC hdc = GetDC(hwnd);
@@ -30,5 +31,5 @@ void DrawModule::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBru
 		BlockSize * idx.first + BlockSize,
 		BlockSize * idx.second + BlockSize);
 	ReleaseDC(hwnd, hdc);
-
+	Sleep(5);
 }
