@@ -287,8 +287,26 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 	}
 	
 }
+#include <stack>
 
+void ChkLink(stack<Node>& s,Node& node)
+{
+	
+	while (!s.empty())
+	{
+		Node top = s.top();
+		int distance = node.currentCost - top.currentCost;
 
+		if (distance == 14 || distance == 10) 
+		{
+			s.push(node);
+			return;
+		}
+		s.pop();
+	}
+	s.push(node);
+
+}
 void Graph::AStar(const HWND& hwnd)
 {
 	ResetVisited();
@@ -304,11 +322,14 @@ void Graph::AStar(const HWND& hwnd)
 	m_visited[array_idx.first][array_idx.second] = true; //  За·Д
 	AStarDistance(hwnd,q, array_idx);
 	
+	stack<Node> s;
+
+
 	while (!q.empty())
 	{
-		auto current = q.top();
+		Node current = q.top();
 		q.pop();
-
+		
 		pair<int, int> array_idx;
 		ArrayCoordinate(current.idx, array_idx);
 
@@ -319,10 +340,16 @@ void Graph::AStar(const HWND& hwnd)
 		{
 			break;
 		}
-
-		DrawGrid(hwnd, { y, x }, EBrush::OrangeBrush);
+		ChkLink(s, current);
+		DrawGrid(hwnd, { y, x }, EBrush::GrayBrush);
 		q.push(current);
 		AStarDistance(hwnd,q, {x,y});
+	}
+	while (!s.empty())
+	{
+		auto [x, y] = s.top().idx;
+		s.pop();
+		DrawGrid(hwnd, { x, y }, EBrush::OrangeBrush);
 	}
 	double number = (chrono::high_resolution_clock::now() - sTime).count() / pow(1000, 3);
 	wchar_t buffer[32];
