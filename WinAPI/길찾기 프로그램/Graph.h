@@ -18,7 +18,7 @@ struct Node
 			 (abs(target.first  - x ) - len) * 10 +
 			 (abs(target.second - y ) - len) * 10;
 		total = needCost + currentCost;
-		std::cout << "  total : " << total << "  needCost : " << needCost << "  currentCost : " << currentCost << "\n";
+		/*std::cout << "  total : " << total << "  needCost : " << needCost << "  currentCost : " << currentCost << "\n";*/
 	};
 	Node(const std::pair<int, int> p, std::pair<int, int>& target, int cost)
 		:Node(p.first, p.second, target, cost) {}
@@ -37,6 +37,10 @@ struct Node
 			return currentCost < n2.currentCost;
 		}
 		return total > n2.total;
+	}
+	std::pair<int,int> operator - (const Node& other)
+	{
+		return { abs(idx.first - other.idx.first) ,abs(idx.second - other.idx.second) };
 	}
 };
 

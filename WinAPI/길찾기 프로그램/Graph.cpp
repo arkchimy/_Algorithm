@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-#define DelayTime 50
+#define DelayTime 500
 using namespace std;
 
 void TextureCoordinate(const pair<int, int>& idx, pair<int, int>& rt)
@@ -229,7 +229,7 @@ search:
 
 */
 
-
+vector<vector<int>> costs;
 
 void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q, const std::pair<int, int>& pos)
 {
@@ -268,6 +268,7 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 			continue;
 
 		DrawGrid(hwnd, texturecoordinate_idx, EBrush::GreenBrush, DelayTime);
+
 		//대각선의 경우에
 		// is Wall 은 arrayidx
 		switch (i)
@@ -292,16 +293,18 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 			node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 10);
 			q.emplace(node);
 			// int를 LPCWSTR 문자열로 변환
+			costs[rx][ry] = min(costs[rx][ry] , node.total);
 			wchar_t buffer[20];
-			swprintf_s(buffer, sizeof(buffer) / sizeof(wchar_t), L"%d", node.total);
+			swprintf_s(buffer, sizeof(buffer) / sizeof(wchar_t), L"%d", costs[rx][ry]);
 			TextGrid(hwnd, texturecoordinate_idx, buffer);
 			continue;
 		}
 		node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 14);
 		q.emplace(node);
 
+		costs[rx][ry] = min(costs[rx][ry], node.total);
 		wchar_t buffer[20];
-		swprintf_s(buffer, sizeof(buffer) / sizeof(wchar_t), L"%d", node.total);
+		swprintf_s(buffer, sizeof(buffer) / sizeof(wchar_t), L"%d", costs[rx][ry]);
 		TextGrid(hwnd, texturecoordinate_idx, buffer);
 
 		
@@ -310,26 +313,38 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 }
 #include <stack>
 
-void ChkLink(stack<Node>& s,Node& node)
+void ChkLink(stack<Node> s, stack<Node>& rt, Node node)
 {
-	
+	//node는 마지막 targetNode임 .
+	//
+	Node current = node;
 	while (!s.empty())
 	{
 		Node top = s.top();
-		int distance = node.currentCost - top.currentCost;
-
-		if (distance == 14 || distance == 10) 
+		int distance = current.currentCost - top.currentCost;
+	
+		pair<int, int> idx_distance = current - top;
+		if (idx_distance.first < 2 && idx_distance.second < 2) 
 		{
-			s.push(node);
-			return;
+			if (distance == 14 || distance == 10)
+			{
+				rt.push(top);
+				std::cout << "  top : " << top.idx.first << " - " << top.idx.second
+					<< "  current : " << current.idx.first << " - " << current.idx.second
+					<< "  distance : " << distance << "\n";
+				current = top;
+			}
 		}
+		
 		s.pop();
 	}
-	s.push(node);
+	
 
 }
 void Graph::AStar(const HWND& hwnd)
 {
+	costs.resize(Row, vector<int>(Column,INT_MAX));
+
 	ResetVisited();
 	auto sTime = chrono::high_resolution_clock::now();
 
@@ -344,7 +359,7 @@ void Graph::AStar(const HWND& hwnd)
 	AStarDistance(hwnd,q, array_idx);
 	
 	stack<Node> s;
-
+	stack<Node> route;
 
 	while (!q.empty())
 	{
@@ -355,21 +370,23 @@ void Graph::AStar(const HWND& hwnd)
 		ArrayCoordinate(current.idx, array_idx);
 
 		auto& [x, y] = array_idx;
-		//m_visited[x][y] = true;
+		m_visited[x][y] = true;
 
 		if (y == m_targetPos.first && x == m_targetPos.second)
 		{
+			ChkLink(s, route, current);
 			break;
 		}
-		ChkLink(s, current);
 		DrawGrid(hwnd, { y, x }, EBrush::GrayBrush, DelayTime);
+		s.push(current);
 		q.push(current);
 		AStarDistance(hwnd,q, {x,y});
 	}
-	while (!s.empty())
+
+	while (!route.empty())
 	{
-		auto [x, y] = s.top().idx;
-		s.pop();
+		auto [x, y] = route.top().idx;
+		route.pop();
 		DrawGrid(hwnd, { x, y }, EBrush::OrangeBrush, DelayTime);
 	}
 	double number = (chrono::high_resolution_clock::now() - sTime).count() / pow(1000, 3);

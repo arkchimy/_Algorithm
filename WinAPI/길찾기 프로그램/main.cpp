@@ -131,10 +131,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		if (wParam == VK_F2)
 		{
+			graph.SearchBefore();
+			InvalidateRect(hWnd, nullptr, true);
 			graph.AStar(hWnd);
 		}
 		if (wParam == VK_F1) 
 		{
+			graph.SearchBefore();
+			InvalidateRect(hWnd, nullptr, true);
 			graph.Dijkstra(hWnd);
 		}
 		if (wParam == VK_SPACE)
