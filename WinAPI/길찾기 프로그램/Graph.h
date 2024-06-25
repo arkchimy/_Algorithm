@@ -64,18 +64,17 @@ public:
 	// 리셋 
 	void ResetVisited();
 	void ResetGraph();
+	void SearchBefore();
 	
 	//DrawModule 그리기 기능의 오버라이드
-	virtual void DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color = EBrush::WhiteBrush) override; //  texturecoordinate
+	virtual void DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color = EBrush::WhiteBrush,float delaytime = 0.f); //  texturecoordinate
 	virtual void TextGrid(const HWND& hwnd, const std::pair<int, int>& idx,LPCWSTR str);
 	// 길찾기 알고리즘
 	void Dijkstra(const HWND& hwnd);
 	void AStar(const HWND& hwnd);
 	void AStarDistance(const HWND& hwnd,std::priority_queue<Node, std::vector<Node>>& q, const std::pair<int, int>& pos);//arraycoordinate
 
-public:
-
-	
+private:
 
 	std::vector<std::vector<int>> m_graph;
 	std::vector<std::vector<bool>> m_visited;

@@ -129,10 +129,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			graph.ResetGraph();
 			InvalidateRect(hWnd, nullptr, true);
 		}
+		if (wParam == VK_F2)
+		{
+			graph.AStar(hWnd);
+		}
+		if (wParam == VK_F1) 
+		{
+			graph.Dijkstra(hWnd);
+		}
 		if (wParam == VK_SPACE)
 		{
-			//graph.Dijkstra(hWnd);
-			graph.AStar(hWnd);
+			graph.SearchBefore();
+			InvalidateRect(hWnd, nullptr, true);
 		}
 		break;
 	case WM_CHAR:

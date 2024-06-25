@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 
+#define DelayTime 50
 using namespace std;
 
 void TextureCoordinate(const pair<int, int>& idx, pair<int, int>& rt)
@@ -51,10 +52,24 @@ void Graph::ResetGraph()
 	for (std::vector<int>& row : m_graph)
 		fill(row.begin(), row.end(), 0);
 }
-void Graph::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color)
+void Graph::SearchBefore()
+{
+	for (std::vector<int>& row : m_graph) 
+	{
+		for (auto& elem : row) 
+		{
+			if (elem == int(EBrush::RedBrush) ||
+				elem == int(EBrush::BlueBrush) ||
+				elem == int(EBrush::BlackBrush))
+				continue;
+			elem = 0;
+		}
+	}
+}
+void Graph::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color,float delaytime)
 {
 	m_graph[idx.second][idx.first] = int(color);
-	DrawModule::DrawGrid(hwnd, idx, color);
+	DrawModule::DrawGrid(hwnd, idx, color, delaytime);
 }
 
 void Graph::TextGrid(const HWND& hwnd, const std::pair<int, int>& idx,LPCWSTR str)
@@ -81,7 +96,7 @@ void Graph::PaintedDraw(const HWND& hwnd)
 	{
 		for (int j = 0; j < Column; j++)
 		{
-			DrawGrid(hwnd, { i,j }, EBrush(m_graph[i][j]));
+			DrawGrid(hwnd, { j,i }, EBrush(m_graph[i][j]));
 		}
 	}
 	EndPaint(hwnd,&pt);
@@ -122,12 +137,17 @@ void Graph::Dijkstra(const HWND& hwnd)
 	int dx[] = { -1, 1,0,0 ,-1,1,-1,1};
 	int dy[] = { 0, 0,-1,1 ,-1,-1,1,1};
 
+	pair<int, int> array_idx;
+	ArrayCoordinate(m_startPos, array_idx);
+
 	vector<vector<bool>> visited(Row,vector<bool>(Column,false));
 	
 	queue<pair < pair<int, int>,vector<pair<int,int> > >> q;
-	q.push({ m_startPos,vector<pair<int,int>>() });
+	q.push({ array_idx,vector<pair<int,int>>() });
 
-	visited[m_startPos.first][m_startPos.second] = true;
+
+
+	visited[array_idx.first][array_idx.second] = true;
 	auto sTime = chrono::high_resolution_clock::now();
 
 
@@ -174,9 +194,10 @@ void Graph::Dijkstra(const HWND& hwnd)
 			{
 				for (auto& current : route)
 				{
-					
+					pair<int, int> texture_idx;
+					TextureCoordinate(current, texture_idx);
 					m_graph[current.first][current.second] = int(EBrush::OrangeBrush);
-					DrawGrid(hwnd, { current.first,current.second },EBrush::OrangeBrush);
+					DrawGrid(hwnd, { texture_idx.first,texture_idx.second },EBrush::OrangeBrush, DelayTime);
 					
 				}
 				goto search;
@@ -189,7 +210,7 @@ void Graph::Dijkstra(const HWND& hwnd)
 			
 			m_graph[rx][ry] = int(EBrush::GrayBrush);
 			m_visited[rx][ry] = true;
-			DrawGrid(hwnd, { rx,ry },EBrush::GrayBrush);
+			DrawGrid(hwnd, { ry,rx },EBrush::GrayBrush,DelayTime);
 			
 		}
 		
@@ -246,7 +267,7 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 		if (m_visited[rx][ry] || IsWall({ rx,ry }))
 			continue;
 
-		DrawGrid(hwnd, texturecoordinate_idx, EBrush::GreenBrush);
+		DrawGrid(hwnd, texturecoordinate_idx, EBrush::GreenBrush, DelayTime);
 		//대각선의 경우에
 		// is Wall 은 arrayidx
 		switch (i)
@@ -341,7 +362,7 @@ void Graph::AStar(const HWND& hwnd)
 			break;
 		}
 		ChkLink(s, current);
-		DrawGrid(hwnd, { y, x }, EBrush::GrayBrush);
+		DrawGrid(hwnd, { y, x }, EBrush::GrayBrush, DelayTime);
 		q.push(current);
 		AStarDistance(hwnd,q, {x,y});
 	}
@@ -349,7 +370,7 @@ void Graph::AStar(const HWND& hwnd)
 	{
 		auto [x, y] = s.top().idx;
 		s.pop();
-		DrawGrid(hwnd, { x, y }, EBrush::OrangeBrush);
+		DrawGrid(hwnd, { x, y }, EBrush::OrangeBrush, DelayTime);
 	}
 	double number = (chrono::high_resolution_clock::now() - sTime).count() / pow(1000, 3);
 	wchar_t buffer[32];

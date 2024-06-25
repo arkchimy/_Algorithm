@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void DrawModule::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color)
+void DrawModule::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBrush color,float delaytime)
 {
 	//static  변수를 DrawGrid 내에 삽입함으로써 접근성 제어 - 전역변수의 단점을 지움
 	static HBRUSH mBrush[BRUSH_CNT] = 
@@ -31,5 +31,5 @@ void DrawModule::DrawGrid(const HWND& hwnd, const std::pair<int, int>& idx, EBru
 		BlockSize * idx.first + BlockSize,
 		BlockSize * idx.second + BlockSize);
 	ReleaseDC(hwnd, hdc);
-	Sleep(5);
+	Sleep(delaytime);
 }
