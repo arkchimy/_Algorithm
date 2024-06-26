@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-#define DelayTime 500
+#define DelayTime 50
 using namespace std;
 
 void TextureCoordinate(const pair<int, int>& idx, pair<int, int>& rt)
@@ -22,7 +22,7 @@ void Graph::Initalize(const HWND& hwnd)
 {
 
 	Row = (gWnd_rt.right - gWnd_rt.left) / BlockSize;
-	Column = (gWnd_rt.bottom - gWnd_rt.top) / BlockSize;
+	Column = Row ;
 
 	m_graph.resize(Row, vector<int>(Column, 0));
 	m_visited.resize(Row, vector<bool>(Column, false));
@@ -134,8 +134,8 @@ void Graph::SelectEnd(const HWND& hwnd, const pair<int, int>& idx)
 
 void Graph::Dijkstra(const HWND& hwnd)
 {
-	int dx[] = { -1, 1,0,0 ,-1,1,-1,1};
-	int dy[] = { 0, 0,-1,1 ,-1,-1,1,1};
+	int dx[] = { -1, 1,0,0 ,-1,-1, 1,1};
+	int dy[] = { 0, 0,-1,1 ,-1, 1,-1,1};
 
 	pair<int, int> array_idx;
 	ArrayCoordinate(m_startPos, array_idx);
@@ -172,19 +172,19 @@ void Graph::Dijkstra(const HWND& hwnd)
 			switch (i)
 			{
 			case 4:
-				if(IsWall({ rx + 1,ry }) && IsWall({ rx ,ry + 1 }))
+				if (IsWall({ rx + 1,ry  }) && IsWall({ rx  ,ry + 1 }))
 					continue;
 				break;
 			case 5:
-				if (IsWall({ rx + 1,ry }) && IsWall({ rx ,ry - 1 }))
+				if (IsWall({ rx ,ry - 1}) && IsWall({ rx + 1,ry  }))
 					continue;
 				break;
 			case 6:
-				if (IsWall({ rx ,ry - 1 }) && IsWall({ rx ,ry + 1 }))
+				if (IsWall({ rx - 1 ,ry  }) && IsWall({ rx ,ry + 1 }))
 					continue;
 				break;
 			case 7:
-				if (IsWall({ rx - 1,ry }) && IsWall({ rx ,ry - 1 }))
+				if (IsWall({ rx ,ry - 1 }) && IsWall({ rx - 1,ry  }))
 					continue;
 				break;
 
@@ -233,8 +233,8 @@ vector<vector<int>> costs;
 
 void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q, const std::pair<int, int>& pos)
 {
-	int dx[] = { -1,1,0,0,-1,-1,1,1 };
-	int dy[] = { 0,0,-1,1,-1,1,-1,1 };
+	int dx[] = { -1, 1,0,0 ,-1,-1, 1,1 };
+	int dy[] = { 0, 0,-1,1 ,-1, 1,-1,1 };
 	
 	if (q.empty())
 		return;
@@ -254,12 +254,15 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 		if (texturecoordinate_idx.first == m_targetPos.first && 
 			texturecoordinate_idx.second == m_targetPos.second)
 		{
-			if(i < 4)
+			if (i < 4) 
 				node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 10);
 			else
 				node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 14);
-			q.emplace(node);
-
+			if (costs[rx][ry] > node.total)
+			{
+				costs[rx][ry] = min(costs[rx][ry], node.total);
+				q.emplace(node);
+			}
 			break;
 		}
 		if (rx < 0 || ry < 0 || Row <= rx || Column <= ry)
@@ -267,42 +270,51 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 		if (m_visited[rx][ry] || IsWall({ rx,ry }))
 			continue;
 
-		DrawGrid(hwnd, texturecoordinate_idx, EBrush::GreenBrush, DelayTime);
+		DrawGrid(hwnd, texturecoordinate_idx, EBrush::GreenBrush);
 
 		//대각선의 경우에
 		// is Wall 은 arrayidx
 		switch (i)
 		{
 		case 4:
-			if (IsWall({ rx + 1,ry }) && IsWall({ rx ,ry + 1 }))
+			if (IsWall({ rx + 1,ry }) && IsWall({ rx  ,ry + 1 }))
 				continue;
 			break;
 		case 5:
-			if (IsWall({ rx + 1,ry }) && IsWall({ rx ,ry - 1 }))
+			if (IsWall({ rx ,ry - 1 }) && IsWall({ rx + 1,ry }))
 				continue;
 			break;
 		case 6:
-			if (IsWall({ rx ,ry - 1 }) && IsWall({ rx ,ry + 1 }))
+			if (IsWall({ rx - 1 ,ry }) && IsWall({ rx ,ry + 1 }))
 				continue;
 			break;
 		case 7:
-			if (IsWall({ rx - 1,ry }) && IsWall({ rx ,ry - 1 }))
+			if (IsWall({ rx ,ry - 1 }) && IsWall({ rx - 1,ry }))
 				continue;
 			break;
 		default:
 			node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 10);
-			q.emplace(node);
+			if(costs[rx][ry] > node.total)
+			{
+				costs[rx][ry] = min(costs[rx][ry], node.total);
+				q.emplace(node);
+			}
+			
 			// int를 LPCWSTR 문자열로 변환
-			costs[rx][ry] = min(costs[rx][ry] , node.total);
+			
 			wchar_t buffer[20];
 			swprintf_s(buffer, sizeof(buffer) / sizeof(wchar_t), L"%d", costs[rx][ry]);
 			TextGrid(hwnd, texturecoordinate_idx, buffer);
 			continue;
 		}
 		node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 14);
-		q.emplace(node);
-
+		if (costs[rx][ry] > node.total)
+		{
+			costs[rx][ry] = min(costs[rx][ry], node.total);
+			q.emplace(node);
+		}
 		costs[rx][ry] = min(costs[rx][ry], node.total);
+
 		wchar_t buffer[20];
 		swprintf_s(buffer, sizeof(buffer) / sizeof(wchar_t), L"%d", costs[rx][ry]);
 		TextGrid(hwnd, texturecoordinate_idx, buffer);
@@ -343,6 +355,7 @@ void ChkLink(stack<Node> s, stack<Node>& rt, Node node)
 }
 void Graph::AStar(const HWND& hwnd)
 {
+	costs.clear();
 	costs.resize(Row, vector<int>(Column,INT_MAX));
 
 	ResetVisited();
