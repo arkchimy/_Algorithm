@@ -6,6 +6,8 @@
 #include <iostream>
 #include <string>
 
+#include <fstream>
+
 #define DelayTime 50
 using namespace std;
 
@@ -18,14 +20,61 @@ void ArrayCoordinate(const pair<int, int>& idx, pair<int, int>& rt)
 	rt = { idx.second,idx.first };
 }
 
+Graph::Graph()
+:Row(10), Column(10)
+{
+
+}
+
+Graph::~Graph()
+{
+	std::ofstream outFile("example.txt");
+	std::string line;
+
+	// 파일이 정상적으로 열렸는지 확인
+	if (outFile.is_open())
+	{
+		for (auto& Row : m_graph) 
+		{
+			for (auto& Column : Row)
+				outFile << Column;
+			outFile << "\n";
+		}
+		// 파일 닫기
+		outFile.close();
+	}
+	else 
+	{
+		std::cerr << "Unable to open file for reading" << std::endl;
+	}
+}
+
 void Graph::Initalize(const HWND& hwnd)
 {
 
 	Row = (gWnd_rt.right - gWnd_rt.left) / BlockSize;
-	Column = Row ;
+	Column = Row;
 
 	m_graph.resize(Row, vector<int>(Column, 0));
 	m_visited.resize(Row, vector<bool>(Column, false));
+
+	std::ifstream inFile("example.txt");
+	std::string line;
+	if (inFile.is_open())
+	{
+		int idx = 0;
+		while (std::getline(inFile, line))
+		{
+			
+			for (char& ch : line)
+			{
+				m_graph[idx / Column][idx % Row] = int(ch) - '0';
+				idx++;
+			}
+
+		}
+	}
+	InvalidateRect(hwnd, nullptr, true);
 }
 
 
@@ -270,7 +319,7 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 		if (m_visited[rx][ry] || IsWall({ rx,ry }))
 			continue;
 
-		DrawGrid(hwnd, texturecoordinate_idx, EBrush::GreenBrush);
+		DrawGrid(hwnd, texturecoordinate_idx, EBrush::GreenBrush,DelayTime);
 
 		//대각선의 경우에
 		// is Wall 은 arrayidx
@@ -294,7 +343,7 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 			break;
 		default:
 			node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 10);
-			if(costs[rx][ry] > node.total)
+			if(costs[rx][ry] >= node.total)
 			{
 				costs[rx][ry] = min(costs[rx][ry], node.total);
 				q.emplace(node);
@@ -308,7 +357,7 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 			continue;
 		}
 		node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 14);
-		if (costs[rx][ry] > node.total)
+		if (costs[rx][ry] >= node.total)
 		{
 			costs[rx][ry] = min(costs[rx][ry], node.total);
 			q.emplace(node);

@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <vector>
 
-#define BlockSize 50
+#define BlockSize 20
 
 extern int Screen_Width;
 extern int Screen_Height;

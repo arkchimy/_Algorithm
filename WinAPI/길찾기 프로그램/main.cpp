@@ -90,6 +90,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 		graph.Initalize(hWnd);
+		graph.PaintedDraw(hWnd);
 		return 0;
 
 	case WM_PAINT:
@@ -160,7 +161,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_DESTROY:
+
 		PostQuitMessage(0);
+
 		return 0;
 	}
 

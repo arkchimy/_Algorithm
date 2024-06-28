@@ -47,8 +47,8 @@ struct Node
 class Graph : public DrawModule
 {
 public:
-	Graph():Row(10),Column(10){};
-	~Graph() {};
+	Graph();
+	~Graph();
 public:
 	
 	void Initalize(const HWND& hwnd);
