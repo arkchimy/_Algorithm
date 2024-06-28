@@ -68,7 +68,12 @@ void Graph::Initalize(const HWND& hwnd)
 			
 			for (char& ch : line)
 			{
+				if (int(ch) - '0' == 6)
+					m_startPos = make_pair<int>(idx / Column,idx % Row);
+				else if (int(ch) - '0' == 2)
+					m_targetPos = make_pair<int>(idx / Column, idx % Row);
 				m_graph[idx / Column][idx % Row] = int(ch) - '0';
+				
 				idx++;
 			}
 
@@ -343,7 +348,7 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 			break;
 		default:
 			node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 10);
-			if(costs[rx][ry] >= node.total)
+			if(costs[rx][ry] > node.total)
 			{
 				costs[rx][ry] = min(costs[rx][ry], node.total);
 				q.emplace(node);
@@ -357,7 +362,7 @@ void Graph::AStarDistance(const HWND& hwnd,priority_queue<Node, vector<Node>>& q
 			continue;
 		}
 		node = Node(texturecoordinate_idx, m_targetPos, preNode.currentCost + 14);
-		if (costs[rx][ry] >= node.total)
+		if (costs[rx][ry] > node.total)
 		{
 			costs[rx][ry] = min(costs[rx][ry], node.total);
 			q.emplace(node);
