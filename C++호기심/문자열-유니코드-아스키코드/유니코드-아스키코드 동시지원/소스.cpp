@@ -13,7 +13,8 @@
 int _tmain()
 {
 	TCHAR str[] = _T("12345");
-
+	LPCTSTR str2 = str;
 	_tprintf(_T("%d\n"), sizeof(str));
+	_tprintf(_T("%d\n"), sizeof(str2));
 
 }
