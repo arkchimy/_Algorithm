@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34407.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Volatile공부", "Volatile공부.vcxproj", "{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+		프로카데미 학습|x64 = 프로카데미 학습|x64
+		프로카데미 학습|x86 = 프로카데미 학습|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.Debug|x64.ActiveCfg = Debug|x64
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.Debug|x64.Build.0 = Debug|x64
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.Debug|x86.ActiveCfg = Debug|Win32
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.Debug|x86.Build.0 = Debug|Win32
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.Release|x64.ActiveCfg = Release|x64
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.Release|x64.Build.0 = Release|x64
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.Release|x86.ActiveCfg = Release|Win32
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.Release|x86.Build.0 = Release|Win32
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.프로카데미 학습|x64.ActiveCfg = 프로카데미 학습|x64
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.프로카데미 학습|x64.Build.0 = 프로카데미 학습|x64
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.프로카데미 학습|x86.ActiveCfg = 프로카데미 학습|Win32
+		{7925809A-ED3A-4CF9-9F7B-5D254AFF5C56}.프로카데미 학습|x86.Build.0 = 프로카데미 학습|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9B08BAD1-9585-462F-9452-3EB783EB5124}
+	EndGlobalSection
+EndGlobal
